@@ -10,6 +10,11 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import CreateItemButton from "./components/CreateItemButton";
 
+import Regular from "./pages/admin/users/Regular";
+import Owner from "./pages/admin/users/Owner";
+import Admin from "./pages/admin/users/Admin";
+
+
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
 
@@ -32,7 +37,7 @@ export default function App() {
         <Tab.Navigator>
           <Tab.Screen
             name="Home"
-            component={Home}
+            component={Regular}
             options={{ headerRight: () => <CreateItemButton /> }}
           />
           <Tab.Screen name="Profile" component={Profile} />
