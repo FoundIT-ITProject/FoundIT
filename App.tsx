@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import Auth from "./pages/Auth";
+
 import { Session } from "@supabase/supabase-js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Register from "./pages/Register";
 
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -38,8 +40,9 @@ export default function App() {
           <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
       ) : (
-        <Stack.Navigator>
-          <Tab.Screen name="Auth" component={Auth} />
+        <Stack.Navigator initialRouteName="Auth">
+          <Stack.Screen name="Auth" component={Auth} />
+          <Stack.Screen name="Register" component={Register} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

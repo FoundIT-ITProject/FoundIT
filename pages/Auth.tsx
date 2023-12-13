@@ -1,13 +1,18 @@
+// Importeer de nodige dingen
 import React, { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { supabase } from "../lib/supabase";
 import { Button, Input, CheckBox } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native"; // Voeg de navigatie-hook toe
+
 
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const navigation = useNavigation(); // Haal de navigatiefunctie op
 
   const signInWithEmail = async () => {
     setLoading(true);
@@ -72,10 +77,11 @@ export default function Auth() {
           onPress={signInWithEmail}
           buttonStyle={styles.signInButton}
         />
+        {/* Knop om naar de registratiepagina te navigeren */}
         <Button
           title="Create Account"
           disabled={loading}
-          onPress={signUpWithEmail}
+          onPress={() => navigation.navigate("Register" as never)} // Navigeer naar de registratiepagina
           buttonStyle={styles.signUpButton}
         />
       </View>
@@ -100,10 +106,10 @@ const styles = StyleSheet.create({
   },
   signInButton: {
     marginTop: 20,
-    backgroundColor: "#2196F3", // Green color (you can customize)
+    backgroundColor: "#2196F3", // Groene kleur (je kunt aanpassen)
   },
   signUpButton: {
     marginTop: 10,
-    backgroundColor: "#2196F3", // Blue color (you can customize)
+    backgroundColor: "#2196F3", // Blauwe kleur (je kunt aanpassen)
   },
 });
