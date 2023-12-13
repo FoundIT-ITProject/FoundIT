@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useState } from "react";
+import ItemCard from "./ui/ItemCard";
 
 const Home = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -15,7 +16,8 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Welcome to the Home Screen {session?.user.id}!</Text>
+      <Text>Hey hallo {session?.user.email}!</Text>
+      <ItemCard></ItemCard>
     </View>
   );
 };
