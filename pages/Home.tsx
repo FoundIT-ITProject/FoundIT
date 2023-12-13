@@ -1,25 +1,39 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList} from "react-native";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useState } from "react";
 import ItemCard from "../components/ui/ItemCard";
+import SearchBar from "../components/ui/SearchBar";
 
 const Home = () => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [items, setItems] = useState<any>()
+  const [error, setError] = useState<any>()
+
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-  }, []);
+    const fetchItem = async () =>{
+      
+        const {data, error} = await supabase.from("Items").select("*");
+        setItems(data);
+        setError(error)
+      
+     
+    }
 
-  
+    fetchItem().then(() => {
+      console.log("data",items)
+      console.log("error", error)
+    })
+    
+
+  },[])
 
 
   return (
       
       <ScrollView contentContainerStyle={styles.cardContainer}>
+        <SearchBar/>
         <ItemCard />
         <ItemCard />
         <ItemCard />
