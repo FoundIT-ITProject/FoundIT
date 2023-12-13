@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Home from "./components/Home";
 import Profile from "./components/Profile";
+import CreateItemButton from "./components/ui/CreateItemButton";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -29,7 +30,11 @@ export default function App() {
     <NavigationContainer>
       {session ? (
         <Tab.Navigator>
-          <Tab.Screen name="Home" component={Home} />
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{ headerRight: () => <CreateItemButton /> }}
+          />
           <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
       ) : (
