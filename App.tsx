@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
-import Auth from "./components/Auth";
+import Auth from "./pages/Auth";
 import { Session } from "@supabase/supabase-js";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from "./components/Home";
-import Profile from "./components/Profile";
-import CreateItemButton from "./components/ui/CreateItemButton";
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import CreateItemButton from "./components/CreateItemButton";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
