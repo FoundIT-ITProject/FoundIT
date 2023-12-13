@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useState } from "react";
-import ItemCard from "./ui/ItemCard";
+import ItemCard from "../components/ui/ItemCard";
 
 const Home = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -14,23 +14,35 @@ const Home = () => {
     });
   }, []);
 
+  
+
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Hey hallo {session?.user.email}!</Text>
-      <View style={styles.cardContainer}>
+      
+      <ScrollView contentContainerStyle={styles.cardContainer}>
         <ItemCard />
         <ItemCard />
-        
-      </View>
-    </View>
+        <ItemCard />
+        <ItemCard />
+        <ItemCard />
+        <ItemCard />
+        <ItemCard />
+      </ScrollView>
+
+      
+    
   );
 };
 
 const styles = StyleSheet.create({
   cardContainer: {
+    paddingTop: 100,
+    paddingBottom: 100,
     flexDirection: 'row',  // Rij-layout voor horizontale weergave
-    flexWrap: 'wrap',      // Wrap naar de volgende rij als het niet past
-    justifyContent: 'space-between',  // Verdeel de ruimte tussen de kaarten
+    flexWrap: 'wrap', 
+    // flexBasis: 50,     // Wrap naar de volgende rij als het niet past
+     justifyContent: 'center',
+     gap: 5, // Verdeel de ruimte tussen de kaarten
   },
 })
 
