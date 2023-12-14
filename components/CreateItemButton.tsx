@@ -15,11 +15,7 @@ const CreateItemButton: React.FC<CreateItemButtonProps> = ({ onPress }) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    position: "relative",
-    bottom: 10,
-    right: 0,
-  },
+  button: {},
 });
 
 export default CreateItemButton;

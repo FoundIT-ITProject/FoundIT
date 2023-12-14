@@ -35,19 +35,7 @@ export default function App() {
 
     return (
       <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerRight: () => (
-              <CreateItemButton
-                onPress={() => {
-                  navigation.navigate("CreateItem");
-                }}
-              />
-            ),
-          }}
-        />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Group screenOptions={{ presentation: "modal" }}>
           <Stack.Screen name="CreateItem" component={CreateItem} />
         </Stack.Group>
@@ -66,6 +54,7 @@ export default function App() {
               headerShown: false,
             }}
           />
+
           <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
       ) : (

@@ -4,26 +4,78 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Button,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
+
+import * as ImagePicker from "expo-image-picker";
 
 import { useState } from "react";
 
 const CreateItem = () => {
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
-  const [itemPrice, setItemPrice] = useState("");
+  const [itemLocation, setItemLocation] = useState("");
 
   const handleSubmit = () => {
-    console.log(itemName, itemDescription, itemPrice);
+    console.log(itemName, itemDescription, itemLocation);
     setItemName("");
     setItemDescription("");
-    setItemPrice("");
+    setItemLocation("");
+  };
+
+  const [image, setImage] = useState<any>("");
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true, // This is the important bit!
+    });
+
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0].uri);
+      console.log(image);
+    }
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+    let cameraResult = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true, // This is the important bit!
+    });
+
+    if (!cameraResult.canceled) {
+      setImage(cameraResult.assets[0].uri);
+      console.log(image);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
       <View style={styles.itemContainer}>
         <Text style={styles.title}>Create Item</Text>
+        <Button title="Pick an image from camera roll" onPress={pickImage} />
+        <Button title="Take a photo" onPress={takePhoto} />
+        {image && (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        )}
         <TextInput
           style={styles.itemInput}
           placeholder="Item Name"
@@ -40,16 +92,16 @@ const CreateItem = () => {
         />
         <TextInput
           style={styles.itemInput}
-          placeholder="Item Price"
+          placeholder="Item Location"
           placeholderTextColor={"#808080"}
-          value={itemPrice}
-          onChangeText={(text) => setItemPrice(text)}
+          value={itemLocation}
+          onChangeText={(text) => setItemLocation(text)}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -59,6 +111,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#F5F5F5", // Light grey background
+    marginBottom: 100,
   },
 
   itemContainer: {
