@@ -7,7 +7,7 @@ const Home = () => {
   const currentUser = FIREBASE_AUTH.currentUser;
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Wlcome {currentUser?.displayName}</Text>
+      <Text>Welcome {currentUser?.displayName}</Text>
       <TouchableOpacity
         style={styles.SignoutButton}
         onPress={() => {
