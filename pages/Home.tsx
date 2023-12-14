@@ -1,33 +1,34 @@
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { supabase } from "../lib/supabase";
-import { Session } from "@supabase/supabase-js";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import CreateItemButton from "../components/CreateItemButton";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+
+import { FIREBASE_AUTH } from "../lib/firebaseConfig";
 
 const Home = () => {
-  const [session, setSession] = useState<Session | null>(null);
-
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-  }, []);
-
+  const currentUser = FIREBASE_AUTH.currentUser;
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <CreateItemButton
+      <Text>Wlcome {currentUser?.displayName}</Text>
+      <TouchableOpacity
+        style={styles.SignoutButton}
         onPress={() => {
-          navigation.navigate("CreateItem");
+          FIREBASE_AUTH.signOut();
         }}
-      />
-      <Text>Welcome to the Home Screen {session?.user.id}!</Text>
+      >
+        <Text>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  SignoutButton: {
+    backgroundColor: "#007AFF",
+    borderRadius: 5,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+});
 
 export default Home;
