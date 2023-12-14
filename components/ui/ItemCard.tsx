@@ -5,9 +5,9 @@ const ItemCard = ({ item }: { item: any }) => {
   return (
 <TouchableOpacity style={styles.cardContainer}>
 <View style={styles.cardContent}>
-<Text style={styles.cardTitle}>{item.item_name}</Text>
-<Image source={{ uri: item.item_image }} style={styles.cardImage} />
-<Text style={styles.cardDescription}>Description</Text>
+<Text style={styles.cardTitle}>{item.name}</Text>
+<Image source={{ uri: item.image }} style={styles.cardImage} />
+<Text style={styles.cardDescription}>{item.description}</Text>
 </View>
 </TouchableOpacity>
   );
