@@ -23,6 +23,9 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
+  const [isUser, setIsUser] = useState(true);
+  const [isBusinessOwner, setIsBusinessOwner] = useState(false);
+
 
   const auth = FIREBASE_AUTH;
 
@@ -87,7 +90,9 @@ const Register = () => {
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    
   );
+  
 };
 
 const styles = StyleSheet.create({
