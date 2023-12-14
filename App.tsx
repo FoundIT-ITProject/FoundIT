@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Login from "./pages/(Auth)/Login";
 import CreateItemButton from "./components/CreateItemButton";
+import React from "react";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
