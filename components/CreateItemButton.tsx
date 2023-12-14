@@ -8,16 +8,17 @@ interface CreateItemButtonProps {
 
 const CreateItemButton: React.FC<CreateItemButtonProps> = ({ onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Ionicons name="add-circle" size={42} color="black" />
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Ionicons name="add-circle" size={48} color="black" />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    marginRight: 40,
-    marginBottom: 40,
+    position: "relative",
+    bottom: 10,
+    right: 0,
   },
 });
 
