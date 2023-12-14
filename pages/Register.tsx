@@ -1,4 +1,3 @@
-// Register.tsx
 import React, { useState } from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { Input, Button, CheckBox } from "react-native-elements";
@@ -16,33 +15,35 @@ export default function Register() {
   const handleRegistration = async () => {
     try {
       const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: email,
+      password: password,
       });
 
       if (error) {
-        Alert.alert(error.message);
+        Alert.alert("Registration Error", error.message);
       } else if (data && data.user) {
         const { error: metadataError } = await supabase
           .from("users")
           .upsert([
             {
-              id: data.user.id,
+              id: data.user.id, 
               email,
-              firstName,
-              lastName,
+              first_name: firstName, // Aangepaste naam voor databasekolom
+              last_name: lastName, // Aangepaste naam voor databasekolom
               role: getSelectedRole(),
             },
           ]);
 
         if (metadataError) {
           console.error("Error updating user metadata:", metadataError.message);
+          Alert.alert("Metadata Update Error");
         } else {
-          Alert.alert("Registration successful. Please check your email for verification.");
+          Alert.alert("Registration Successful", "Please check your email for verification.");
         }
       }
     } catch (error) {
       console.error("Error during registration:", (error as Error).message);
+      Alert.alert("Registration Error");
     }
   };
 
@@ -51,8 +52,10 @@ export default function Register() {
       return "Admin";
     } else if (isBusinessOwner) {
       return "BusinessOwner";
-    } else {
+    } else if (isUser) {
       return "User";
+    } else {
+      return "DefaultRole";
     }
   };
 
@@ -124,6 +127,6 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     marginTop: 20,
-    backgroundColor: "#2196F3", // Blue color (you can customize)
+    backgroundColor: "#2196F3",
   },
 });
