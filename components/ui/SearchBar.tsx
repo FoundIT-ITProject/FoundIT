@@ -26,28 +26,28 @@ export default function SearchBar(){
 
 const styles = StyleSheet.create({
     ResearchBar: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 40,
-        
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center', // Toegevoegd om de zoekbalk in het midden te plaatsen
+      marginBottom: 40,
+      marginTop: 20,
     },
-    Main:{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#FFF',
-        width: 269,
-        height: 54,
-        padding: 10,
-        borderRadius: 50,
-        borderWidth: 1,
-        borderColor: '#000',
+    Main: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      backgroundColor: '#FFF',
+      width: 269,
+      height: 54,
+      padding: 10,
+      borderRadius: 50,
+      borderWidth: 1,
+      borderColor: '#000',
     },
-    Input:{
-        margin: 10,
-
+    Input: {
+      margin: 10,
     },
-    ButtonSearch:{
-        width: 44,
-        height: 44,
-    }
-})
+    ButtonSearch: {
+      width: 44,
+      height: 44,
+    },
+  });
