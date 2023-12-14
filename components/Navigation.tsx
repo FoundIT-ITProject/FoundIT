@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Login from "../pages/(Auth)/Login";
 import Register from "../pages/(Auth)/Register";
-import Home from "../pages/Home";
+import Home from "../pages/admin/users/Regular";
 import Profile from "../pages/Profile";
 
 export const InsideNavigation = ({ navigation }: any) => {

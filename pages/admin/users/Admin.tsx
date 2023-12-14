@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Text, FlatList, View, StyleSheet } from "react-native";
-import { supabase } from "../../../lib/supabase";
-import { User } from "@supabase/supabase-js";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { FIREBASE_DB } from "../../../lib/firebaseConfig";
 
-const OwnerPage = () => {
+const AdminPage = () => {
   const [userEmails, setUserEmails] = useState<string[]>([]);
 
   useEffect(() => {
-    // Fetch user emails from Supabase when the component mounts
     const fetchUserEmails = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("role", "Admin"); // Filter by role "User"
+      try {
+        const usersCollection = collection(FIREBASE_DB, "Users");
+        const usersQuery = query(usersCollection, where("role", "==", "Admin"));
+        const querySnapshot = await getDocs(usersQuery);
 
-      if (error) {
-        console.error("Error fetching user emails:", error.message);
-      } else {
-        // Extract emails from the fetched data
-        const emails = data?.map((value) => value.email) || [];
+        const emails = querySnapshot.docs.map((doc) => doc.data().email);
         setUserEmails(emails);
+      } catch (error) {
+    //   console.error("Error fetching user emails:", error.message);
       }
     };
 
@@ -28,6 +25,7 @@ const OwnerPage = () => {
 
   return (
     <View style={styles.cardContainer}>
+<Text>users</Text>
       <FlatList
         data={userEmails}
         keyExtractor={(email) => email}
@@ -56,4 +54,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OwnerPage;
+export default AdminPage;
