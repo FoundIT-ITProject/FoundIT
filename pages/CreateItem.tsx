@@ -6,9 +6,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { useState } from "react";
+
 const CreateItem = () => {
+  const [itemName, setItemName] = useState("");
+  const [itemDescription, setItemDescription] = useState("");
+  const [itemPrice, setItemPrice] = useState("");
+
   const handleSubmit = () => {
-    // Handle the submit action here
+    console.log(itemName, itemDescription, itemPrice);
+    setItemName("");
+    setItemDescription("");
+    setItemPrice("");
   };
 
   return (
@@ -19,16 +28,22 @@ const CreateItem = () => {
           style={styles.itemInput}
           placeholder="Item Name"
           placeholderTextColor={"#808080"}
+          value={itemName}
+          onChangeText={(text) => setItemName(text)}
         />
         <TextInput
           style={styles.itemInput}
           placeholder="Item Description"
           placeholderTextColor={"#808080"}
+          value={itemDescription}
+          onChangeText={(text) => setItemDescription(text)}
         />
         <TextInput
           style={styles.itemInput}
           placeholder="Item Price"
           placeholderTextColor={"#808080"}
+          value={itemPrice}
+          onChangeText={(text) => setItemPrice(text)}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
