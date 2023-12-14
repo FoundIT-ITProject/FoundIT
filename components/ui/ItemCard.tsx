@@ -2,17 +2,27 @@ import React from 'react';
 import {StyleSheet, View, Image, TouchableOpacity, Text} from 'react-native';
 
 
-const ItemCard = () => {
- return (
-    <TouchableOpacity style={styles.cardContainer}>
+interface ItemCardProps {
+    item: {
+      item_name: string;
+      item_image: string;
+      // Voeg andere velden toe indien nodig
+    };
+  }
+
+
+const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
+    return (
+      <TouchableOpacity style={styles.cardContainer}>
         <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>title</Text>
-        <Image source={{}} style={styles.cardImage}/>
-        <Text style={styles.cardDescription}>description</Text>
+          <Text style={styles.cardTitle}>{item.item_name}</Text>
+          <Image source={{ uri: item.item_image }} style={styles.cardImage} />
+          {/* Voeg andere velden toe zoals description */}
+          {/* <Text style={styles.cardDescription}>{item.description}</Text> */}
         </View>
-    </TouchableOpacity>
- );
-};
+      </TouchableOpacity>
+    );
+  };
 
 const styles = StyleSheet.create({
     cardContainer: {

@@ -7,41 +7,45 @@ import ItemCard from "../components/ui/ItemCard";
 import SearchBar from "../components/ui/SearchBar";
 
 const Home = () => {
-  const [items, setItems] = useState<any>()
-  const [error, setError] = useState<any>()
-
+  const [items, setItems] = useState<any[]>([])
 
   useEffect(() => {
     const fetchItem = async () =>{
-      
-        const {data, error} = await supabase.from("Items").select("*");
-        setItems(data);
-        setError(error)
+      try{
+        const {data, error} = await supabase.from('Items').select('*');
+        if (error) {
+          console.error('Fout bij ophalen van gegevens: ', error);
+        }
+        else{
+          console.log('Opgehaalde gegevens: ', data);
+          
+        }
+      }catch (error: any)
+      {
+        console.error('Onverwachtte fout: ', error.message);
+      }
       
      
     }
 
-    fetchItem().then(() => {
-      console.log("data",items)
-      console.log("error", error)
-    })
-    
-
+    fetchItem();
   },[])
 
 
   return (
       
-      <ScrollView contentContainerStyle={styles.cardContainer}>
-        <SearchBar/>
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-        <ItemCard />
-      </ScrollView>
+    <ScrollView contentContainerStyle={styles.cardContainer}>
+    <SearchBar/>
+    {items.map((item, index) => (
+        <ItemCard
+          key={index}
+          item={{
+            item_name: item.item_name,
+            item_image: item.item_image,
+          }}
+        />
+      ))}
+  </ScrollView>
 
       
     
