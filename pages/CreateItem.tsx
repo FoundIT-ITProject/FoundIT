@@ -15,16 +15,39 @@ import * as ImagePicker from "expo-image-picker";
 
 import { useState } from "react";
 
+import { collection, addDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "../lib/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+
 const CreateItem = () => {
+  const navigation = useNavigation();
+
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [itemLocation, setItemLocation] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
+      const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
+        created_at: new Date().toISOString(),
+        date_lost: new Date().toISOString(),
+        item_name: itemName,
+        item_description: itemDescription,
+        location_lost: itemLocation,
+        image_url: "https://via.placeholder.com/150",
+        status: "lost",
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+
     console.log(itemName, itemDescription, itemLocation);
     setItemName("");
     setItemDescription("");
     setItemLocation("");
+
+    navigation.goBack();
   };
 
   const [image, setImage] = useState<any>("");
