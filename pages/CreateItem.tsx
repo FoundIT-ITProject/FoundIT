@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
@@ -66,8 +67,8 @@ const CreateItem = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.itemContainer}>
         <Text style={styles.title}>Create Item</Text>
