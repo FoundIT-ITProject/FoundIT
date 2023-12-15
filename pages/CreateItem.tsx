@@ -8,8 +8,6 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
-  StatusBar,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -18,8 +16,15 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
 import { collection, addDoc } from "firebase/firestore";
-import { FIREBASE_DB } from "../lib/firebaseConfig";
+import { FIREBASE_DB, FIREBASE_STORAGE } from "../lib/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { ref, uploadBytes, uploadString } from "firebase/storage";
+
+import { decode } from "base-64";
+
+if (typeof atob === "undefined") {
+  global.atob = decode;
+}
 
 const CreateItem = () => {
   const navigation = useNavigation();
@@ -27,14 +32,19 @@ const CreateItem = () => {
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [itemLocation, setItemLocation] = useState("");
+  const [image, setImage] = useState<any>("");
 
   const [date, setDate] = useState<Date | undefined>();
 
   const handleSubmit = async () => {
-    if (!itemName || !itemDescription || !itemLocation || !date) {
+    if (!itemName || !itemDescription || !itemLocation || !date || !image) {
       console.log("Please fill in all fields");
       return;
     }
+
+    // Upload the image to Firebase Storage
+    await uploadImageAndSaveURL();
+
     try {
       const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
         created_at: new Date().toLocaleString(),
@@ -58,10 +68,7 @@ const CreateItem = () => {
     navigation.goBack();
   };
 
-  const [image, setImage] = useState<any>("");
-
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -71,16 +78,19 @@ const CreateItem = () => {
     });
 
     if (!pickerResult.canceled) {
-      setImage(pickerResult.assets[0].uri);
-      console.log(image);
+      setImage(pickerResult.assets[0]);
     }
   };
 
   const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+        return;
+      }
+    } catch (error) {
+      console.error("Error requesting camera permissions: ", error);
     }
     let cameraResult = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -92,7 +102,26 @@ const CreateItem = () => {
 
     if (!cameraResult.canceled) {
       setImage(cameraResult.assets[0].uri);
-      console.log(image);
+    }
+  };
+
+  const uploadImageAndSaveURL = async () => {
+    try {
+      if (image) {
+        // Create a reference to the Firebase Storage location where the image will be uploaded
+        const imageRef = ref(FIREBASE_STORAGE, "images/");
+
+        // Base64 formatted string
+        uploadString(imageRef, image.base64, "base64").then((snapshot) => {
+          console.log("Uploaded a base64 string!");
+        });
+        alert("Image uploaded successfully!");
+      } else {
+        alert("Please select an image first!");
+      }
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+      alert("Error uploading image. Please try again.");
     }
   };
 
@@ -106,7 +135,10 @@ const CreateItem = () => {
         <Button title="Pick an image from camera roll" onPress={pickImage} />
         <Button title="Take a photo" onPress={takePhoto} />
         {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+          <Image
+            source={{ uri: image.uri }}
+            style={{ width: 200, height: 200 }}
+          />
         )}
         <TextInput
           style={styles.itemInput}
