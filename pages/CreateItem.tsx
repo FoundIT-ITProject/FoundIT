@@ -9,7 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  StatusBar,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -26,11 +28,17 @@ const CreateItem = () => {
   const [itemDescription, setItemDescription] = useState("");
   const [itemLocation, setItemLocation] = useState("");
 
+  const [date, setDate] = useState<Date | undefined>();
+
   const handleSubmit = async () => {
+    if (!itemName || !itemDescription || !itemLocation || !date) {
+      console.log("Please fill in all fields");
+      return;
+    }
     try {
       const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
-        created_at: new Date().toISOString(),
-        date_lost: new Date().toISOString(),
+        created_at: new Date().toLocaleString(),
+        date_lost: date?.toLocaleString(),
         item_name: itemName,
         item_description: itemDescription,
         location_lost: itemLocation,
@@ -121,6 +129,24 @@ const CreateItem = () => {
           value={itemLocation}
           onChangeText={(text) => setItemLocation(text)}
         />
+        <DateTimePicker
+          value={date || new Date()}
+          mode={"date"}
+          is24Hour={true}
+          onChange={(event, selectedDate) => {
+            setDate(selectedDate);
+          }}
+        />
+        <DateTimePicker
+          value={date || new Date()}
+          mode={"time"}
+          is24Hour={true}
+          onChange={(event, selectedDate) => {
+            setDate(selectedDate);
+          }}
+        />
+        <Text>{date?.toLocaleString()}</Text>
+
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
