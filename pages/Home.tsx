@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { getDocs, collection } from "firebase/firestore";
@@ -8,6 +7,7 @@ import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
 import { useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 type RootStackParamList = {
   Home: undefined;
   UploadItem: undefined;
@@ -17,7 +17,7 @@ type RootStackParamList = {
 const Home = () => {
   const [items, setItems] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
-    
+
   type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
   const navigation = useNavigation<NavigationProp>();
@@ -50,13 +50,19 @@ const Home = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
-          <SearchBar onSearch={handleSearch} />
-          <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
-      <View/>
+        <SearchBar onSearch={handleSearch} />
+        <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
+      </View>
+
       <View style={styles.itemContainer}>
         {filteredItems.map((item, index) => (
           <ItemCard key={index} item={item} />
         ))}
       </View>
     </ScrollView>
+  );
+};
 
+StyleSheet.create({});
+
+export default Home;
