@@ -4,18 +4,18 @@ import { StyleSheet } from "react-native";
 
 interface CreateItemButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
+  styles?: any;
 }
 
-const CreateItemButton: React.FC<CreateItemButtonProps> = ({ onPress }) => {
+const CreateItemButton: React.FC<CreateItemButtonProps> = ({
+  onPress,
+  styles,
+}) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity style={styles} onPress={onPress}>
       <Ionicons name="add-circle" size={48} color="black" />
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {},
-});
 
 export default CreateItemButton;

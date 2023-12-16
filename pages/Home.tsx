@@ -49,9 +49,12 @@ const Home = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View>
+      <View style={styles.searchBar}>
         <SearchBar onSearch={handleSearch} />
-        <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
+        <CreateItemButton
+          styles={styles.createItemButton}
+          onPress={() => navigation.navigate("UploadItem")}
+        />
       </View>
 
       <View style={styles.itemContainer}>
@@ -64,7 +67,6 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-
   container: {
     padding: 16,
   },
@@ -73,8 +75,19 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
+  searchBar: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+    alignItems: "center",
 
-
+    marginBottom: 16,
+  },
+  createItemButton: {
+    alignSelf: "center",
+    marginBottom: 16,
+  },
 });
 
 export default Home;
