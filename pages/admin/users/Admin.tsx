@@ -25,7 +25,6 @@ const AdminPage = () => {
 
   return (
     <View style={styles.cardContainer}>
-<Text>users</Text>
       <FlatList
         data={userEmails}
         keyExtractor={(email) => email}
