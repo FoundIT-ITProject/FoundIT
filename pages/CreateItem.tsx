@@ -56,7 +56,7 @@ const CreateItem = () => {
         item_name: itemName,
         item_description: itemDescription,
         location_lost: itemLocation,
-        image_url: fileURI || "https://via.placeholder.com/150",
+        image_url: filename || "https://via.placeholder.com/150",
         status: "lost",
       });
       console.log("Document written with ID: ", docRef.id);
