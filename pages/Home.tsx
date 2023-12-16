@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import { getDocs, collection } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 
@@ -17,28 +23,29 @@ type RootStackParamList = {
 const Home = () => {
   const [items, setItems] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
   const navigation = useNavigation<NavigationProp>();
 
+  const fetchItems = async () => {
+    try {
+      const itemsCollection = collection(FIREBASE_DB, "Items");
+      const querySnapshot = await getDocs(itemsCollection);
+
+      const fetchedItems = querySnapshot.docs.map((doc) => doc.data());
+
+      setItems(fetchedItems);
+      setFilteredItems(fetchedItems); // Initial state is set to all items
+    } catch (error: any) {
+      console.error("Unexpected error:", error.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const itemsCollection = collection(FIREBASE_DB, "Items");
-        const querySnapshot = await getDocs(itemsCollection);
-
-        const fetchedItems = querySnapshot.docs.map((doc) => doc.data());
-
-        setItems(fetchedItems);
-        setFilteredItems(fetchedItems); // Initial state is set to all items
-      } catch (error: any) {
-        console.error("Unexpected error:", error.message);
-      }
-    };
-
     fetchItems();
-  }, []);
+  }, [refreshing]);
 
   const handleSearch = (searchTerm: string) => {
     const filtered = items.filter((item) =>
@@ -48,7 +55,13 @@ const Home = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={fetchItems} />
+      }
+      contentContainerStyle={styles.container}
+    >
+      {refreshing ? <ActivityIndicator /> : null}
       <View style={styles.searchBar}>
         <SearchBar onSearch={handleSearch} />
         <CreateItemButton
@@ -73,7 +86,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
   },
   searchBar: {
     flex: 1,

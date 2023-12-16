@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -16,9 +17,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
 import { collection, addDoc } from "firebase/firestore";
-import { FIREBASE_DB, FIREBASE_STORAGE } from "../lib/firebaseConfig";
+import { FIREBASE_DB, uploadToFirebase } from "../lib/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
-import { ref, uploadBytes, uploadString } from "firebase/storage";
 
 import { decode } from "base-64";
 
@@ -32,18 +32,22 @@ const CreateItem = () => {
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [itemLocation, setItemLocation] = useState("");
-  const [image, setImage] = useState<any>("");
+  const [fileURI, setFileURI] = useState<string>("");
+  const [filename, setFilename] = useState<any>("");
 
   const [date, setDate] = useState<Date | undefined>();
 
   const handleSubmit = async () => {
-    if (!itemName || !itemDescription || !itemLocation || !date || !image) {
+    if (!itemName || !itemDescription || !itemLocation || !date || !fileURI) {
       console.log("Please fill in all fields");
       return;
     }
 
     // Upload the image to Firebase Storage
-    await uploadImageAndSaveURL();
+    const uploadResp = await uploadToFirebase(fileURI, filename, (v: any) =>
+      console.log(v)
+    );
+    console.log(uploadResp);
 
     try {
       const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
@@ -52,7 +56,7 @@ const CreateItem = () => {
         item_name: itemName,
         item_description: itemDescription,
         location_lost: itemLocation,
-        image_url: "https://via.placeholder.com/150",
+        image_url: fileURI || "https://via.placeholder.com/150",
         status: "lost",
       });
       console.log("Document written with ID: ", docRef.id);
@@ -69,59 +73,38 @@ const CreateItem = () => {
   };
 
   const pickImage = async () => {
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: true, // This is the important bit!
-    });
+    try {
+      const cameraRollResp = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        quality: 1,
+      });
 
-    if (!pickerResult.canceled) {
-      setImage(pickerResult.assets[0]);
+      if (!cameraRollResp.canceled) {
+        const { uri } = cameraRollResp.assets[0];
+        setFileURI(uri);
+        setFilename(uri.split("/").pop());
+      }
+    } catch (e: any) {
+      Alert.alert("Error Uploading Image " + e.message);
     }
   };
 
   const takePhoto = async () => {
     try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
-        return;
+      const cameraResp = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        quality: 1,
+      });
+
+      if (!cameraResp.canceled) {
+        const { uri } = cameraResp.assets[0];
+        setFileURI(uri);
+        setFilename(uri.split("/").pop());
       }
-    } catch (error) {
-      console.error("Error requesting camera permissions: ", error);
-    }
-    let cameraResult = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: true, // This is the important bit!
-    });
-
-    if (!cameraResult.canceled) {
-      setImage(cameraResult.assets[0].uri);
-    }
-  };
-
-  const uploadImageAndSaveURL = async () => {
-    try {
-      if (image) {
-        // Create a reference to the Firebase Storage location where the image will be uploaded
-        const imageRef = ref(FIREBASE_STORAGE, "images/");
-
-        // Base64 formatted string
-        uploadString(imageRef, image.base64, "base64").then((snapshot) => {
-          console.log("Uploaded a base64 string!");
-        });
-        alert("Image uploaded successfully!");
-      } else {
-        alert("Please select an image first!");
-      }
-    } catch (error) {
-      console.error("Error uploading image: ", error);
-      alert("Error uploading image. Please try again.");
+    } catch (e: any) {
+      Alert.alert("Error Uploading Image " + e.message);
     }
   };
 
@@ -134,9 +117,9 @@ const CreateItem = () => {
         <Text style={styles.title}>Create Item</Text>
         <Button title="Pick an image from camera roll" onPress={pickImage} />
         <Button title="Take a photo" onPress={takePhoto} />
-        {image && (
+        {fileURI && (
           <Image
-            source={{ uri: image.uri }}
+            source={{ uri: fileURI }}
             style={{ width: 200, height: 200 }}
           />
         )}
