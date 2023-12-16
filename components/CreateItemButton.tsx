@@ -1,19 +1,21 @@
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, GestureResponderEvent } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 
-const CreateItemButton = () => {
+interface CreateItemButtonProps {
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
+const CreateItemButton: React.FC<CreateItemButtonProps> = ({ onPress }) => {
   return (
-    <TouchableOpacity style={styles.button}>
-      <Ionicons name="add-circle" size={42} color="black" />
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Ionicons name="add-circle" size={48} color="black" />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  button: {
-    marginRight: 10,
-  },
+  button: {},
 });
 
 export default CreateItemButton;

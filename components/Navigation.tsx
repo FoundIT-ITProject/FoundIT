@@ -9,9 +9,32 @@ import Login from "../pages/(Auth)/Login";
 import Register from "../pages/(Auth)/Register";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
+import CreateItem from "../pages/CreateItem";
+
+function HomeStack() {
+  const HomeInsideStack = createNativeStackNavigator();
+
+  return (
+    <HomeInsideStack.Navigator>
+      <HomeInsideStack.Screen
+        name="Home"
+        component={Home}
+        options={{ headerShown: false }}
+      />
+      <HomeInsideStack.Group screenOptions={{ presentation: "modal" }}>
+        <HomeInsideStack.Screen
+          name="UploadItem"
+          component={CreateItem}
+          options={{ headerShown: false }}
+        />
+      </HomeInsideStack.Group>
+    </HomeInsideStack.Navigator>
+  );
+}
 
 export const InsideNavigation = ({ navigation }: any) => {
   const InsideStack = createBottomTabNavigator();
+
   return (
     <InsideStack.Navigator
       screenOptions={({ route }) => ({
@@ -31,7 +54,7 @@ export const InsideNavigation = ({ navigation }: any) => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen name="Home" component={Home} />
+      <InsideStack.Screen name="HomeStack" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
     </InsideStack.Navigator>
   );

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { getDocs, collection } from "firebase/firestore";
@@ -5,10 +6,21 @@ import { FIREBASE_DB } from "../lib/firebaseConfig";
 
 import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
+import { useNavigation } from "@react-navigation/native";
+import CreateItemButton from "../components/CreateItemButton";
+type RootStackParamList = {
+  Home: undefined;
+  UploadItem: undefined;
+  // Add other screens here
+};
 
 const Home = () => {
   const [items, setItems] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
+    
+  type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
+
+  const navigation = useNavigation<NavigationProp>();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -37,25 +49,14 @@ const Home = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <SearchBar onSearch={handleSearch} />
+      <View>
+          <SearchBar onSearch={handleSearch} />
+          <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
+      <View/>
       <View style={styles.itemContainer}>
         {filteredItems.map((item, index) => (
           <ItemCard key={index} item={item} />
         ))}
       </View>
     </ScrollView>
-  );
-};
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  itemContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-});
-
-export default Home;

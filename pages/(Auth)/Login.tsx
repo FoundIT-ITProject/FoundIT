@@ -44,44 +44,39 @@ const Login = ({ navigation }: RouterProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <View style={styles.form}>
-          <Text style={styles.heading}>Log In</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Email"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              secureTextEntry
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.TouchableOpacity}
-            onPress={handleLogin}
-          >
-            <Text> Log In</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.TouchableOpacity}
-            onPress={() => navigation.navigate("Register")}
-          >
-            <Text> Create an account</Text>
-          </TouchableOpacity>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+      <View style={styles.form}>
+        <Text style={styles.heading}>Log In</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Email"
+          />
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Password"
+            secureTextEntry
+          />
+        </View>
+        <TouchableOpacity style={styles.TouchableOpacity} onPress={handleLogin}>
+          <Text> Log In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.TouchableOpacity}
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text> Create an account</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
