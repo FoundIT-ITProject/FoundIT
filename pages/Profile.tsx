@@ -231,7 +231,7 @@ const Profile = () => {
           >
             <TextInput
               value={editedLastName}
-              onChangeText={setEditedFirstName}
+              onChangeText={setEditedLastName}
               style={[
                 styles.input,
                 {
