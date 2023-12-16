@@ -42,7 +42,7 @@ const Home = () => {
 
   const handleSearch = (searchTerm: string) => {
     const filtered = items.filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.item_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredItems(filtered);
   };
