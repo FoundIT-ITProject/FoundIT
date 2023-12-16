@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { FIREBASE_AUTH } from "../lib/firebaseConfig";
+import React, { useEffect, useState } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { getDocs, collection } from "firebase/firestore";
+import { FIREBASE_DB } from "../lib/firebaseConfig";
+
+import SearchBar from "../components/ui/SearchBar";
+import ItemCard from "../components/ui/ItemCard";
 import { useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 type RootStackParamList = {
@@ -13,35 +15,48 @@ type RootStackParamList = {
 };
 
 const Home = () => {
+  const [items, setItems] = useState<any[]>([]);
+  const [filteredItems, setFilteredItems] = useState<any[]>([]);
+    
   type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
-  const currentUser = FIREBASE_AUTH.currentUser;
   const navigation = useNavigation<NavigationProp>();
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const itemsCollection = collection(FIREBASE_DB, "Items");
+        const querySnapshot = await getDocs(itemsCollection);
+
+        const fetchedItems = querySnapshot.docs.map((doc) => doc.data());
+
+        setItems(fetchedItems);
+        setFilteredItems(fetchedItems); // Initial state is set to all items
+      } catch (error: any) {
+        console.error("Unexpected error:", error.message);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const handleSearch = (searchTerm: string) => {
+    const filtered = items.filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredItems(filtered);
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Welcome {currentUser?.displayName}</Text>
-      <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
-      <TouchableOpacity
-        style={styles.SignoutButton}
-        onPress={() => {
-          FIREBASE_AUTH.signOut();
-        }}
-      >
-        <Text>Logout</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+    <ScrollView contentContainerStyle={styles.container}>
+      <View>
+          <SearchBar onSearch={handleSearch} />
+          <CreateItemButton onPress={() => navigation.navigate("UploadItem")} />
+      <View/>
+      <View style={styles.itemContainer}>
+        {filteredItems.map((item, index) => (
+          <ItemCard key={index} item={item} />
+        ))}
+      </View>
+    </ScrollView>
 
-const styles = StyleSheet.create({
-  SignoutButton: {
-    backgroundColor: "#007AFF",
-    borderRadius: 5,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-});
-
-export default Home;
