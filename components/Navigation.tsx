@@ -32,6 +32,12 @@ function HomeStack() {
   );
 }
 
+import Users from "../pages/admin/Users";
+import Regular from "../pages/admin/users/Regular";
+import Owner from "../pages/admin/users/Owner";
+import Admin from "../pages/admin/users/Admin";
+
+
 export const InsideNavigation = ({ navigation }: any) => {
   const InsideStack = createBottomTabNavigator();
 
@@ -56,7 +62,21 @@ export const InsideNavigation = ({ navigation }: any) => {
     >
       <InsideStack.Screen name="HomeStack" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
+      <InsideStack.Screen name="Users" component={Users} />
+
     </InsideStack.Navigator>
+  );
+};
+
+const UsersStack = () => {
+  const Stack = createNativeStackNavigator();
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Regular" component={Regular} />
+      <Stack.Screen name="Owner" component={Owner} />
+      <Stack.Screen name="Admin" component={Admin} />
+    </Stack.Navigator>
   );
 };
 
@@ -75,5 +95,8 @@ export const OutsideNavigation = () => {
         options={{ headerShown: true, headerBackVisible: true }}
       />
     </Stack.Navigator>
+
+
+
   );
 };
