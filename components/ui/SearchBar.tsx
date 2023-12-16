@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   Input: {
-    margin: 10,
+    padding: 10,
   },
   ButtonSearch: {
     width: 44,
