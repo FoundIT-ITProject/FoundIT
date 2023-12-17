@@ -1,8 +1,8 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getFirestore, collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc,setDoc, updateDoc } from 'firebase/firestore';
 import {
-    Alert,
+     KeyboardAvoidingView,Alert,
   TextInput,
   Button,
   StyleSheet,
@@ -15,347 +15,283 @@ import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB } from "../lib/firebaseConfig"
 import { Image } from "react-native";
 import ProfileAvatar from "../components/ProfileAvatar";
 import { Feather } from "@expo/vector-icons";
-import { EmailAuthProvider } from "firebase/auth";
-
-
-interface ExtendedUser extends User {
-  updateEmail(email: string): Promise<void>;
-  reauthenticateWithCredential(credential: AuthCredential): Promise<void>;
-  updatePassword(password: string): Promise<void>;
-}
-
-
-
+import { EmailAuthProvider,getAuth,
+                             updateProfile,
+                             reauthenticateWithCredential,
+                             updatePassword, } from "firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 
 const Profile = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [userDetails, setUserDetails] = useState<any>({});
-  const [editedFirstName, setEditedFirstName] = useState("");
-  const [editedLastName, setEditedLastName] = useState("");
-  const [editedEmail, setEditedEmail] = useState("");
-  const [editedPassword, setEditedPassword] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
+  const auth = getAuth(FIREBASE_APP);
+   const currentUser = auth.currentUser;
+
+  const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+   const [email, setEmail] = useState(currentUser.email || "");
+   const [password, setPassword] = useState("");
+   const [newPassword, setNewPassword] = useState("");
+   const [confirmPassword, setConfirmPassword] = useState("");
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState<Error | null>(null);
+   const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+const [showFirstNameInput, setShowFirstNameInput] = useState(false);
+  const [showLastNameInput, setShowLastNameInput] = useState(false);
+  const [showEmailInput, setShowEmailInput] = useState(false);
 
 
-  const [nameClicked, setNameClicked] = useState(false);
-  const [emailClicked, setEmailClicked] = useState(false);
-  const FIREBASE_DB = getFirestore(FIREBASE_APP);
 
-
-  useEffect(() => {
-    const fetchData = async () => {
+ useEffect(() => {
+    async function fetchUserData() {
       try {
-        const currentUser = FIREBASE_AUTH.currentUser;
-        if (!currentUser) {
-          throw new Error("User not authenticated");
+        const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          setFirstName(userData.Voornaam || "");
+          setLastName(userData.Achternaam || "");
         }
-        setUser(currentUser);
-
-
-        const profileRef = doc(FIREBASE_DB, 'Users', currentUser.uid);
-        const profileSnapshot = await getDoc(profileRef);
-
-
-        if (profileSnapshot.exists()) {
-          const profileData = profileSnapshot.data();
-          setUserDetails({
-            id: profileSnapshot.id,
-            Achternaam: profileData.Achternaam,
-            Voornaam: profileData.Voornaam,
-            email: profileData.email,
-            password: profileData.email,
-
-
-          });
-
-
-          setEditedFirstName(profileData.Voornaam || "");
-          setEditedEmail(profileData.email || "");
-          setEditedLastName(profileData.Achternaam || "");
-          console.log("User details:", JSON.stringify(userDetails));
-        } else {
-          throw new Error("Profile not found");
-        }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching user data:", error.message);
-        Alert.alert("Error fetching user data");
       }
-    };
+    }
 
-
-    fetchData();
+    fetchUserData();
   }, []);
 
 
-  const updateFirstName = async () => {
+
+ const handleFirstNameUpdate = async () => {
     try {
-      if (editedFirstName !== userDetails.Voornaam) {
-        const profileRef = doc(FIREBASE_DB, 'Users', userDetails.id);
-      await updateDoc(profileRef, { Voornaam: editedFirstName });
-
-
-        setUserDetails((prevDetails: any) => ({ ...prevDetails, Voornaam: editedFirstName }));
-        Alert.alert("Name updated successfully!");
-      }
-    } catch (error: any) {
-      console.error("Error updating name:", error.message);
-      Alert.alert("Error updating name");
+      const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+      await setDoc(userDocRef, { Voornaam: firstName }, { merge: true });
+      console.log("First Name Updated!");
+    } catch (error) {
+      console.error("Error updating first name:", error.message);
     }
   };
-  const updateLastName = async () => {
+ const handleFirstNameIconClick = () => {
+    setShowFirstNameInput((prev) => !prev);
+    if (showFirstNameInput) handleFirstNameUpdate();
+  };
+  const handleLastNameUpdate = async () => {
     try {
-      if (editedLastName !== userDetails.Achternaam) {
-        const profileRef = doc(FIREBASE_DB, 'Users', userDetails.id);
-        await updateDoc(profileRef, { Achternaam: editedLastName });
-
-
-        setUserDetails((prevDetails: any) => ({ ...prevDetails,Achternaam: editedLastName }));
-        Alert.alert("Name updated successfully!");
-      }
-    } catch (error: any) {
-      console.error("Error updating name:", error.message);
-      Alert.alert("Error updating name");
+      const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+      await setDoc(userDocRef, { Achternaam: lastName }, { merge: true });
+      console.log("Last Name Updated!");
+    } catch (error) {
+      console.error("Error updating last name:", error.message);
     }
   };
-  const updateEmail = async () => {
+const handleLastNameIconClick = () => {
+    setShowLastNameInput((prev) => !prev);
+    if (showLastNameInput) handleLastNameUpdate();
+  };
+const handleEmailIconClick = () => {
+    setShowEmailInput((prev) => !prev);
+    if (showEmailInput) handleChangeEmail();
+  };
+
+const handleChangeEmail = async () => {
     try {
-      if (editedEmail !== userDetails.email) {
-        await (user as ExtendedUser)?.updateEmail(editedEmail);
-
-
-        setUserDetails((prevDetails: any) => ({ ...prevDetails, email: editedEmail }));
-        Alert.alert("Email updated successfully!");
-      }
+      const credentials = EmailAuthProvider.credential(currentUser.email!, password);
+      await reauthenticateWithCredential(currentUser!, credentials);
+      await updateEmail(currentUser!, email);
+      console.log("Email Updated!");
     } catch (error: any) {
-      console.error("Error updating email:", error.message);
-      Alert.alert("Error updating email");
+      setError(error);
+    } finally {
+      setLoading(false);
+      setPassword("");
+      setEmail("");
     }
   };
-
-
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+const handleCancelPasswordChange = () => {
+    setShowPasswordModal(false);
+    setPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setError(null);
   };
 
+   const handleChangePassword = async () => {
+     if (newPassword !== confirmPassword) {
+       setError(new Error("Passwords do not match"));
+       return;
+     }
 
-  const updatePassword = async () => {
-    try {
-      if (!currentPassword) {
-        Alert.alert("Please enter your current password.");
-        return;
-      }
+     setLoading(true);
+     try {
+       const credentials = await reauthenticateWithCredential(
+         currentUser!,
+         EmailAuthProvider.credential(currentUser.email!, password)
+       );
+       await updatePassword(credentials.user, newPassword);
+       setShowPasswordModal(false);
+       console.log("Password Changed Successfully!");
+     } catch (error: any) {
+       setError(error);
+     } finally {
+       setLoading(false);
+       setPassword("");
+       setNewPassword("");
+       setConfirmPassword("");
+     }
+   };
 
-      const currentUser = user as ExtendedUser;
-
-      if (currentUser) {
-        const credential = EmailAuthProvider.credential(currentUser?.email || "", currentPassword);
-        await currentUser.reauthenticateWithCredential(credential);
-        await currentUser.updatePassword(editedPassword);
-
-        setIsModalVisible(false);
-        Alert.alert("Password updated successfully!");
-        setEditedPassword("");
-      } else {
-        throw new Error("User not found");
-      }
-    } catch (error: any) {
-      console.error("Error updating password:", error.message);
-      Alert.alert("Error updating password. Please check your current password.");
-    }
-  };
-
-
-  const handleLogout = async () => {
+const handleLogout = async () => {
     try {
       await FIREBASE_AUTH.signOut();
-      setUser(null);
-    } catch (error: any) {
-      console.error("Error signing out:", error.message);
+     navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
     }
   };
-
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{userDetails.Voornaam}'s Profile</Text>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView behavior="padding">
 
+         <ProfileAvatar firstName={firstName} lastName={lastName} />
 
-      <ProfileAvatar />
+          <View style={styles.form}>
 
-
-      <View style={styles.form}>
-
-
-
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>First Name</Text>
-          <TouchableOpacity
-            style={styles.inputWrapper}
-            onPress={() => setNameClicked(true)}
-          >
-            <TextInput
-              value={editedFirstName}
-              onChangeText={setEditedFirstName}
-              style={[
-                styles.input,
-                {
-                  borderBottomWidth: nameClicked ? 1 : 0,
-                  borderColor: nameClicked ? "#ccc" : "transparent",
-                },
-              ]}
-              placeholder={userDetails.Voornaam ? "" : "Enter your name"}
-              placeholderTextColor="#888"
-            />
-            <Feather
-              name="edit"
-              size={24}
-              color="black"
-              onPress={updateFirstName}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-
-
-
-
-<View style={styles.inputContainer}>
-          <Text style={styles.label}>Last Name</Text>
-          <TouchableOpacity
-            style={styles.inputWrapper}
-            onPress={() => setNameClicked(true)}
-          >
-            <TextInput
-              value={editedLastName}
-              onChangeText={setEditedLastName}
-              style={[
-                styles.input,
-                {
-                  borderBottomWidth: nameClicked ? 1 : 0,
-                  borderColor: nameClicked ? "#ccc" : "transparent",
-                },
-              ]}
-              placeholder={userDetails.Achternaam ? "" : "Enter your name"}
-              placeholderTextColor="#888"
-            />
-            <Feather
-              name="edit"
-              size={24}
-              color="black"
-              onPress={updateLastName}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-
-
-
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TouchableOpacity
-            style={styles.inputWrapper}
-            onPress={() => setEmailClicked(true)}
-          >
-            <TextInput
-              value={editedEmail}
-              onChangeText={setEditedEmail}
-              style={[
-                styles.input,
-                {
-                  borderBottomWidth: emailClicked ? 1 : 0,
-                  borderColor: emailClicked ? "#ccc" : "transparent",
-                },
-              ]}
-              placeholder={userDetails.email ? "" : "Enter your email"}
-              placeholderTextColor="#888"
-            />
-            <Feather
-              name="edit"
-              size={24}
-              color="black"
-              onPress={updateEmail}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-
-
-        <TouchableOpacity
-          style={styles.changePasswordButton}
-          onPress={toggleModal}
-        >
-          <Text style={styles.changePasswordText}>Change Password</Text>
-        </TouchableOpacity>
-
-
-        <View style={styles.logoutContainer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-
-
-        <Modal visible={isModalVisible} animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Change Password</Text>
-
-
-              <View style={styles.inputContainer}>
-                <TextInput
-                  placeholder="Enter current password"
-                  placeholderTextColor="#888"
-                  secureTextEntry
-                  style={styles.input}
-                  value={currentPassword}
-                  onChangeText={setCurrentPassword}
-                />
-                <View style={styles.inputLine} />
-                <View style={styles.inputContainer}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>First Name</Text>
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={handleFirstNameIconClick}
+              >
+                {showFirstNameInput ? (
                   <TextInput
-                    placeholder="Enter new password"
-                    placeholderTextColor="#888"
-                    secureTextEntry
                     style={styles.input}
-                    value={editedPassword}
-                    onChangeText={setEditedPassword}
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    placeholder="Enter your First Name"
                   />
-                  <View style={styles.inputLine} />
-                </View>
-              </View>
-              <View style={styles.buttonGroup}>
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={updatePassword}
-                >
-                  <Text style={styles.buttonText}>Confirm</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={toggleModal}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
+                ) : (
+                  <>
+                    <Text style={styles.displayText}>{firstName}</Text>
+                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
+                  </>
+                )}
+              </TouchableOpacity>
+              <View style={styles.inputLine} />
             </View>
-          </View>
-        </Modal>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Last Name</Text>
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={handleLastNameIconClick}
+              >
+                {showLastNameInput ? (
+                  <TextInput
+                    style={styles.input}
+                    value={lastName}
+                    onChangeText={setLastName}
+                    placeholder="Enter your Last Name"
+                  />
+                ) : (
+                  <>
+                    <Text style={styles.displayText}>{lastName}</Text>
+                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
+                  </>
+                )}
+              </TouchableOpacity>
+              <View style={styles.inputLine} />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Email</Text>
+              <TouchableOpacity
+                style={styles.inputWrapper}
+                onPress={handleEmailIconClick}
+              >
+                {showEmailInput ? (
+                  <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholder="Enter your Email"
+                    keyboardType="email-address"
+                  />
+                ) : (
+                  <>
+                    <Text style={styles.displayText}>{email}</Text>
+                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
+                  </>
+                )}
+              </TouchableOpacity>
+              <View style={styles.inputLine} />
+            </View>
+
+      <View style={styles.logoutContainer}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
       </View>
-    </View>
-  );
-};
+            <TouchableOpacity
+              style={styles.changePasswordButton}
+              onPress={() => setShowPasswordModal(true)}
+            >
+              <Text style={styles.changePasswordText}>Change Password</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
 
-
-
-
-
-
-
+       <Modal
+         visible={showPasswordModal}
+         animationType="slide"
+         transparent={true}
+         onRequestClose={() => setShowPasswordModal(false)}
+       >
+         <View style={styles.modalContainer}>
+           <View style={styles.modalContent}>
+             <Text style={styles.heading}>Change Password</Text>
+             <TextInput
+               style={styles.input}
+               value={password}
+               onChangeText={setPassword}
+               placeholder="Current Password"
+               secureTextEntry
+             />
+             <TextInput
+               style={styles.input}
+               value={newPassword}
+               onChangeText={setNewPassword}
+               placeholder="New Password"
+               secureTextEntry
+             />
+             <TextInput
+               style={styles.input}
+               value={confirmPassword}
+               onChangeText={setConfirmPassword}
+               placeholder="Confirm New Password"
+               secureTextEntry
+             />
+             {error && <Text style={styles.errorText}>{error.message}</Text>}
+             <View style={styles.modalButtons}>
+               <TouchableOpacity
+                 style={styles.modalButton}
+                 onPress={handleChangePassword}
+               >
+                 <Text style={styles.buttonText}>Change Password</Text>
+               </TouchableOpacity>
+               <TouchableOpacity
+                 style={styles.modalButton}
+                 onPress={handleCancelPasswordChange}
+               >
+                 <Text style={styles.buttonText}>Cancel</Text>
+               </TouchableOpacity>
+             </View>
+           </View>
+         </View>
+       </Modal>
+     </SafeAreaView>
+   );
+ };
 
 const styles = StyleSheet.create({
   container: {
@@ -464,8 +400,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-
-
 
 
 avatar: {

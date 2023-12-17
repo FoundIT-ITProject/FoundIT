@@ -1,73 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Text } from 'react-native';
-import { User } from 'firebase/auth';
-import { FIREBASE_AUTH } from '../lib/firebaseConfig';
-import { FIREBASE_DB } from '../lib/firebaseConfig';
-import { getFirestore, collection, doc, getDoc } from 'firebase/firestore';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-
-
-
-interface FirebaseUser {
-  Achternaam: string;
-  Voornaam: string;
+interface ProfileAvatarProps {
+  firstName: string;
+  lastName: string;
 }
 
+const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ firstName, lastName }) => {
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
 
-const ProfileAvatar = () => {
-  const [userAchternaam, setUserAchternaam] = useState('');
-  const [userVoornaam, setUserVoornaam] = useState('');
-  const [avatarURL, setAvatarURL] = useState('');
-
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const currentUser = FIREBASE_AUTH.currentUser;
-        if (currentUser) {
-          const userDocRef = doc(FIREBASE_DB, 'Users', currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const userData = userDoc.data() as FirebaseUser;
-            setUserAchternaam(userData.Achternaam || '');
-            setUserVoornaam(userData.Voornaam || '');
-
-
-            const formattedName = encodeURIComponent(`${userData.Voornaam} ${userData.Achternaam}`);
-
-
-            const apiUrl = `https://ui-avatars.com/api/?name=${formattedName}`;
-            setAvatarURL(apiUrl);
-          }
-        }
-      } catch (error: any) {
-        console.error('Error fetching user data:', error.message);
-      }
-    };
-
-
-    fetchUserData();
-  }, []);
-
+ const generateBackgroundColor = (initials: string) => {
+    const colors = ['#ff5733', '#33ff57', '#5733ff', '#33aaff', '#aaff33', '#ff33aa'];
+    const charCodeSum = initials.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const colorIndex = charCodeSum % colors.length;
+    return colors[colorIndex];
+  };
+// calculates a color index based on  sum of the ASCII values of the initials
 
   return (
-    <View>
-      {userAchternaam && userVoornaam ? (
-        <View>
-          <Text>User: {`${userVoornaam} ${userAchternaam}`}</Text>
-          <Image
-            source={{ uri: avatarURL }}
-            style={{ width: 100, height: 100 }}
-          />
+   <View style={styles.avatarContainer}>
+        <View style={styles.avatar}>
+          <Text style={styles.initials}>{initials}</Text>
         </View>
-      ) : (
-        <Text>Loading...</Text>
-      )}
-    </View>
+      </View>
   );
 };
 
+const styles = StyleSheet.create({
+  avatar: {
+     width: 120,
+     height: 120,
+     borderRadius: 60,
+     borderWidth: 1,
+     borderColor: '#000',
+     backgroundColor: 'brown',
+     justifyContent: 'center',
+     alignItems: 'center',
+   },
+  initials: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: '800',
+  },
+avatarContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+
+});
 
 export default ProfileAvatar;
-
-
