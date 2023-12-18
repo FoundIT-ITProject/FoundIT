@@ -87,16 +87,3 @@ export const uploadToFirebase = async (
     );
   });
 };
-
-export const getImageFromFirebase = async (imageName: any) => {
-  const storage = getStorage();
-  const imageRef = ref(storage, `images/${imageName}`);
-
-  try {
-    const downloadURL = await getDownloadURL(imageRef);
-    return downloadURL;
-  } catch (error) {
-    console.error("Error getting image from Firebase Storage:", error);
-    return null;
-  }
-};

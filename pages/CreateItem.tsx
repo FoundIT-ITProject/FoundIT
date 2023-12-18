@@ -21,6 +21,7 @@ import { FIREBASE_DB, uploadToFirebase } from "../lib/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
 import { decode } from "base-64";
+import React from "react";
 
 if (typeof atob === "undefined") {
   global.atob = decode;

@@ -1,4 +1,5 @@
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import React from "react";
 import { useState, useEffect } from "react";
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
 

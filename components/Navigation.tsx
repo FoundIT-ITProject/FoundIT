@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import { View } from "react-native";
+import React from "react";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -37,7 +36,6 @@ import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
 
-
 export const InsideNavigation = ({ navigation }: any) => {
   const InsideStack = createBottomTabNavigator();
 
@@ -62,8 +60,7 @@ export const InsideNavigation = ({ navigation }: any) => {
     >
       <InsideStack.Screen name="HomeStack" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
-      <InsideStack.Screen name="Users" component={Users} />
-
+      <InsideStack.Screen name="Users" component={UsersStack} />
     </InsideStack.Navigator>
   );
 };
@@ -73,6 +70,7 @@ const UsersStack = () => {
 
   return (
     <Stack.Navigator>
+      <Stack.Screen name="Users" component={Users} />
       <Stack.Screen name="Regular" component={Regular} />
       <Stack.Screen name="Owner" component={Owner} />
       <Stack.Screen name="Admin" component={Admin} />
@@ -95,8 +93,5 @@ export const OutsideNavigation = () => {
         options={{ headerShown: true, headerBackVisible: true }}
       />
     </Stack.Navigator>
-
-
-
   );
 };

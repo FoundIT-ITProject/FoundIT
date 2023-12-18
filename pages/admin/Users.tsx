@@ -1,20 +1,20 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 const Home = () => {
   const navigation = useNavigation();
 
   const handleRegularButtonClick = () => {
-    navigation.navigate("Regular");
+    navigation.navigate("Regular" as never);
   };
 
   const handleOwnerButtonClick = () => {
-    navigation.navigate("Owner");
+    navigation.navigate("Owner" as never);
   };
 
   const handleAdminButtonClick = () => {
-    navigation.navigate("Admin");
+    navigation.navigate("Admin" as never);
   };
 
   return (
