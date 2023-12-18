@@ -9,6 +9,7 @@ import Register from "../pages/(Auth)/Register";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import CreateItem from "../pages/CreateItem";
+import ForgotPassword from "../pages/(Auth)/ForgotPassword";
 
 function HomeStack() {
   const HomeInsideStack = createNativeStackNavigator();
@@ -95,6 +96,11 @@ export const OutsideNavigation = () => {
         name="Register"
         component={Register}
         options={{ headerShown: true, headerBackVisible: true }}
+      />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{ headerShown: true, title: "Forgot Password" }}
       />
     </Stack.Navigator>
   );
