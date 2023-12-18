@@ -18,7 +18,7 @@ import { Feather } from "@expo/vector-icons";
 import { EmailAuthProvider,getAuth,
                              updateProfile,
                              reauthenticateWithCredential,
-                             updatePassword, } from "firebase/auth";
+                             updatePassword,updateEmail } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/FontAwesome';
 
