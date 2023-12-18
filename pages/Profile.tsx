@@ -318,11 +318,17 @@ const Profile = () => {
                   secureTextEntry
                 />
                 {error && <Text>{error.message}</Text>}
-                <View  style={styles.buttonGroup}>
-                  <TouchableOpacity onPress={handleChangeEmail}style={styles.confirmButton} >
+                <View style={styles.buttonGroup}>
+                  <TouchableOpacity
+                    onPress={handleChangeEmail}
+                    style={styles.confirmButton}
+                  >
                     <Text style={styles.buttonText}>Change</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={handleCloseEmailModal}style={styles.cancelButton}>
+                  <TouchableOpacity
+                    onPress={handleCloseEmailModal}
+                    style={styles.cancelButton}
+                  >
                     <Text style={styles.buttonText}>Cancel</Text>
                   </TouchableOpacity>
                 </View>
@@ -378,14 +384,21 @@ const Profile = () => {
             />
             {error && <Text>{error.message}</Text>}
             <View style={styles.buttonGroup}>
-            <TouchableOpacity onPress={handleChangePassword} style={styles.confirmButton}>
-              <Text style={styles.buttonText}>Change</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCancelPasswordChange}style={styles.cancelButton}>
-              <Text style={styles.buttonText}>Cancel</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleChangePassword}
+                style={styles.confirmButton}
+              >
+                <Text style={styles.buttonText}>Change</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleCancelPasswordChange}
+                style={styles.cancelButton}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View></View>
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -431,8 +444,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     textAlign: "center",
-    
-    
   },
   logoutContainer: {
     width: "100%",

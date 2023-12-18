@@ -58,9 +58,13 @@ export const InsideNavigation = ({ navigation }: any) => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen name="HomeStack" component={HomeStack} />
+      <InsideStack.Screen name="Home Page" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
-      <InsideStack.Screen name="Users" component={UsersStack} />
+      <InsideStack.Screen
+        name="UsersStack"
+        component={UsersStack}
+        options={{ headerShown: false }}
+      />
     </InsideStack.Navigator>
   );
 };
