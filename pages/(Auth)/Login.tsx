@@ -111,15 +111,16 @@ const Login = ({ navigation }: RouterProps) => {
             onPress={() => navigation.navigate("Register")}
           >
             <Text> Create an account</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.TouchableOpacity}
-            onPress={() => navigation.navigate("ForgotPassword")}
-          >
-            <Text>Forgot Password?</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> 
+          
+           <TouchableOpacity
+          style={styles.TouchableOpacity}
+          onPress={() => navigation.navigate("ForgotPassword")}>
+          <Text>Forgot Password?</Text>
+        </TouchableOpacity>
         </View>
+
+      
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

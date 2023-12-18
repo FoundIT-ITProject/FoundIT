@@ -15,6 +15,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../lib/firebaseConfig";
+import SignInWithGoogleButton from "./SignInWithGoogleButton";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -109,6 +110,7 @@ const Register = () => {
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
+          <SignInWithGoogleButton />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
