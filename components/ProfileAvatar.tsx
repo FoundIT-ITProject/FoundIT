@@ -16,13 +16,13 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({ firstName, lastName }) =>
     return colors[colorIndex];
   };
 // calculates a color index based on  sum of the ASCII values of the initials
-
+  const avatarColor = generateBackgroundColor(initials);
   return (
-   <View style={styles.avatarContainer}>
-        <View style={styles.avatar}>
-          <Text style={styles.initials}>{initials}</Text>
-        </View>
-      </View>
+    <View style={styles.avatarContainer}>
+         <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
+           <Text style={styles.initials}>{initials}</Text>
+         </View>
+       </View>
   );
 };
 
@@ -32,10 +32,11 @@ const styles = StyleSheet.create({
      height: 120,
      borderRadius: 60,
      borderWidth: 1,
-     borderColor: '#000',
-     backgroundColor: 'brown',
+     borderColor: 'transparent',
      justifyContent: 'center',
      alignItems: 'center',
+ marginTop: -40,
+
    },
   initials: {
     color: '#fff',
@@ -46,8 +47,9 @@ avatarContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
+    marginBottom: 20,
+
   },
 
 });
-
 export default ProfileAvatar;

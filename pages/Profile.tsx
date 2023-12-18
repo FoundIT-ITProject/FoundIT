@@ -28,6 +28,8 @@ const Profile = () => {
   const auth = getAuth(FIREBASE_APP);
    const currentUser = auth.currentUser;
 
+
+
   const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
    const [email, setEmail] = useState(currentUser.email || "");
@@ -37,6 +39,7 @@ const Profile = () => {
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<Error | null>(null);
    const [showPasswordModal, setShowPasswordModal] = useState(false);
+ const [showEmailModal, setShowEmailModal] = useState(false);
 
 const [showFirstNameInput, setShowFirstNameInput] = useState(false);
   const [showLastNameInput, setShowLastNameInput] = useState(false);
@@ -54,7 +57,8 @@ const [showFirstNameInput, setShowFirstNameInput] = useState(false);
           const userData = userDocSnap.data();
           setFirstName(userData.Voornaam || "");
           setLastName(userData.Achternaam || "");
-        }
+          setEmail(userData.email || "");
+          }
       } catch (error) {
         console.error("Error fetching user data:", error.message);
       }
@@ -78,6 +82,7 @@ const [showFirstNameInput, setShowFirstNameInput] = useState(false);
     setShowFirstNameInput((prev) => !prev);
     if (showFirstNameInput) handleFirstNameUpdate();
   };
+
   const handleLastNameUpdate = async () => {
     try {
       const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
@@ -91,25 +96,44 @@ const handleLastNameIconClick = () => {
     setShowLastNameInput((prev) => !prev);
     if (showLastNameInput) handleLastNameUpdate();
   };
+
 const handleEmailIconClick = () => {
     setShowEmailInput((prev) => !prev);
     if (showEmailInput) handleChangeEmail();
   };
 
+const handleOpenEmailModal = () => {
+    setShowEmailModal(true);
+  }
+ const handleCloseEmailModal = () => {
+       setShowEmailModal(false);
+       setPassword("");
+     };
 const handleChangeEmail = async () => {
-    try {
-      const credentials = EmailAuthProvider.credential(currentUser.email!, password);
-      await reauthenticateWithCredential(currentUser!, credentials);
-      await updateEmail(currentUser!, email);
-      console.log("Email Updated!");
-    } catch (error: any) {
-      setError(error);
-    } finally {
-      setLoading(false);
-      setPassword("");
-      setEmail("");
-    }
-  };
+  try {
+    const user = auth.currentUser;
+    console.log("Current Email:", user.email);
+
+    // Reauthenticate the user without asking for the password input again
+    const credential = EmailAuthProvider.credential(user.email || "", password);
+    await reauthenticateWithCredential(user, credential);
+    console.log("Reauthenticated!");
+
+    // Update the email
+    await updateEmail(user, email);
+    console.log("Email Updated!");
+    setEmail(user.email || "");
+
+    setShowEmailModal(false); // Close the modal after successful email update
+
+  } catch (error: any) {
+    setError(error);
+    console.error("Error updating email:", error);
+  } finally {
+    setLoading(false);
+    setPassword(""); // Clear the password after usage for security
+  }
+};
 const handleCancelPasswordChange = () => {
     setShowPasswordModal(false);
     setPassword("");
@@ -151,13 +175,15 @@ const handleLogout = async () => {
       console.error('Error logging out:', error.message);
     }
   };
+
+
   return (
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView behavior="padding">
-
-         <ProfileAvatar firstName={firstName} lastName={lastName} />
-
-          <View style={styles.form}>
+     <SafeAreaView style={styles.container}>
+           <KeyboardAvoidingView behavior="padding" style={styles.container}>
+             <View style={styles.avatarContainer}>
+               <ProfileAvatar firstName={firstName} lastName={lastName} />
+             </View>
+             <View style={styles.form}>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>First Name</Text>
@@ -165,21 +191,32 @@ const handleLogout = async () => {
                 style={styles.inputWrapper}
                 onPress={handleFirstNameIconClick}
               >
-                {showFirstNameInput ? (
-                  <TextInput
-                    style={styles.input}
-                    value={firstName}
-                    onChangeText={setFirstName}
-                    placeholder="Enter your First Name"
-                  />
-                ) : (
-                  <>
-                    <Text style={styles.displayText}>{firstName}</Text>
-                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
-                  </>
-                )}
+                  {showFirstNameInput ? (
+                       <TextInput
+                         style={styles.input}
+                         value={firstName}
+                         onChangeText={setFirstName}
+                         placeholder="Enter your First Name"
+                       />
+                     ) : (
+                       <Text style={styles.displayText}>{firstName}</Text>
+                     )}
+                     {showFirstNameInput ? (
+                       <Icon
+                         name="check" // during editing
+                         size={20}
+                         color="#000"
+                         style={styles.icon}
+                       />
+                     ) : (
+                       <Icon
+                         name="pencil" //before editing
+                         size={20}
+                         color="#000"
+                         style={styles.icon}
+                       />
+                     )}
               </TouchableOpacity>
-              <View style={styles.inputLine} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Last Name</Text>
@@ -187,58 +224,105 @@ const handleLogout = async () => {
                 style={styles.inputWrapper}
                 onPress={handleLastNameIconClick}
               >
-                {showLastNameInput ? (
-                  <TextInput
-                    style={styles.input}
-                    value={lastName}
-                    onChangeText={setLastName}
-                    placeholder="Enter your Last Name"
-                  />
-                ) : (
-                  <>
-                    <Text style={styles.displayText}>{lastName}</Text>
-                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
-                  </>
-                )}
+                 {showLastNameInput ? (
+                                      <TextInput
+                                        style={styles.input}
+                                        value={lastName}
+                                        onChangeText={setLastName}
+                                        placeholder="Enter your Last Name"
+                                      />
+                                    ) : (
+                                      <Text style={styles.displayText}>{lastName}</Text>
+                                    )}
+                                    {showLastNameInput ? (
+                                      <Icon
+                                        name="check" // during editing
+                                        size={20}
+                                        color="#000"
+                                        style={styles.icon}
+                                      />
+                                    ) : (
+                                      <Icon
+                                        name="pencil" //before editing
+                                        size={20}
+                                        color="#000"
+                                        style={styles.icon}
+                                      />
+                                    )}
               </TouchableOpacity>
-              <View style={styles.inputLine} />
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Email</Text>
+              <View style={styles.inputWrapper}>
+                <Text style={styles.displayText}>{email}</Text>
+              </View>
+            </View>
+            <View style={styles.inputContainer}>
+
               <TouchableOpacity
-                style={styles.inputWrapper}
-                onPress={handleEmailIconClick}
+               style={{ ...styles.changePasswordButton, marginBottom: -15 }}
+                      onPress={handleOpenEmailModal}
               >
-                {showEmailInput ? (
-                  <TextInput
-                    style={styles.input}
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="Enter your Email"
-                    keyboardType="email-address"
-                  />
-                ) : (
-                  <>
-                    <Text style={styles.displayText}>{email}</Text>
-                    <Icon name="edit" size={20} color="#000" style={styles.icon} />
-                  </>
-                )}
+<Text style={styles.changePasswordText}>Change Email</Text>
               </TouchableOpacity>
-              <View style={styles.inputLine} />
+
             </View>
 
-      <View style={styles.logoutContainer}>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+   {/* Email Change Modal */}
+      <Modal
+        visible={showEmailModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={handleCloseEmailModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Change Email</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Enter new email"
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Enter password"
+              secureTextEntry
+            />
+            {error && <Text style={styles.errorText}>{error.message}</Text>}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleChangeEmail}
+              >
+                <Text style={styles.buttonText}>Change Email</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={handleCloseEmailModal}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
             <TouchableOpacity
               style={styles.changePasswordButton}
               onPress={() => setShowPasswordModal(true)}
             >
-              <Text style={styles.changePasswordText}>Change Password</Text>
+
+            <Text style={styles.changePasswordText}>Change Password</Text>
+          </TouchableOpacity>
+          <View style={styles.logoutContainer}>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
           </View>
+        </View>
         </KeyboardAvoidingView>
 
        <Modal
@@ -300,6 +384,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     alignItems: "center",
     justifyContent: "center",
+
   },
   title: {
     fontSize: 24,
@@ -310,6 +395,7 @@ const styles = StyleSheet.create({
   form: {
     flex: 1,
     width: "100%",
+
   },
 
   label: {
@@ -317,6 +403,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 5,
+    textAlign: "center",
   },
 
 
@@ -332,6 +419,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    textAlign: "center",
   },
   logoutContainer: {
     width: '100%',
@@ -386,30 +474,15 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     position: "relative",
+     marginBottom: 20,
+
   },
   input: {
     fontSize: 16,
     color: "#555",
     padding: 8,
+      textAlign: "center",
   },
-  inputLine: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-
-
-avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 1,
-    borderColor: '#000',
-  },
-
 
   inputWrapper: {
     flexDirection: 'row',
@@ -419,9 +492,12 @@ avatar: {
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 5,
+    borderColor:'transparent',
+alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: {
-    marginLeft: 10,
+    marginLeft: 10, position: 'absolute', right: 10,
   },
 
 
@@ -440,6 +516,7 @@ avatar: {
   changePasswordText: {
     color: '#fff',
     fontSize: 18,
+    textAlign: "center",
   },
 
 
