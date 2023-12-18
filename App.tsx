@@ -7,6 +7,7 @@ import { InsideNavigation, OutsideNavigation } from "./components/Navigation";
 
 import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "./lib/firebaseConfig";
+import React from "react";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
