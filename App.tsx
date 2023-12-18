@@ -7,15 +7,10 @@ import { InsideNavigation, OutsideNavigation } from "./components/Navigation";
 
 import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "./lib/firebaseConfig";
-
-import Home from "./pages/Home";
-import Profile from "./pages/Profile";
-import Login from "./pages/(Auth)/Login";
-import CreateItemButton from "./components/CreateItemButton";
+import React from "react";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
-  const Tab = createBottomTabNavigator();
 
   const [user, setUser] = useState<User | null>(null);
 

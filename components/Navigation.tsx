@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import { View } from "react-native";
+import React from "react";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -9,9 +8,37 @@ import Login from "../pages/(Auth)/Login";
 import Register from "../pages/(Auth)/Register";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile";
+import CreateItem from "../pages/CreateItem";
+
+function HomeStack() {
+  const HomeInsideStack = createNativeStackNavigator();
+
+  return (
+    <HomeInsideStack.Navigator>
+      <HomeInsideStack.Screen
+        name="Home"
+        component={Home}
+        options={{ headerShown: false }}
+      />
+      <HomeInsideStack.Group screenOptions={{ presentation: "modal" }}>
+        <HomeInsideStack.Screen
+          name="UploadItem"
+          component={CreateItem}
+          options={{ headerShown: false }}
+        />
+      </HomeInsideStack.Group>
+    </HomeInsideStack.Navigator>
+  );
+}
+
+import Users from "../pages/admin/Users";
+import Regular from "../pages/admin/users/Regular";
+import Owner from "../pages/admin/users/Owner";
+import Admin from "../pages/admin/users/Admin";
 
 export const InsideNavigation = ({ navigation }: any) => {
   const InsideStack = createBottomTabNavigator();
+
   return (
     <InsideStack.Navigator
       screenOptions={({ route }) => ({
@@ -31,9 +58,23 @@ export const InsideNavigation = ({ navigation }: any) => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen name="Home" component={Home} />
+      <InsideStack.Screen name="HomeStack" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
+      <InsideStack.Screen name="Users" component={UsersStack} />
     </InsideStack.Navigator>
+  );
+};
+
+const UsersStack = () => {
+  const Stack = createNativeStackNavigator();
+
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Users" component={Users} />
+      <Stack.Screen name="Regular" component={Regular} />
+      <Stack.Screen name="Owner" component={Owner} />
+      <Stack.Screen name="Admin" component={Admin} />
+    </Stack.Navigator>
   );
 };
 

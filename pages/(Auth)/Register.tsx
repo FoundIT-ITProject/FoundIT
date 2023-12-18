@@ -7,14 +7,13 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-
 import { FIREBASE_AUTH } from "../../lib/firebaseConfig";
 
 const Register = () => {
@@ -23,6 +22,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
+  const [isUser, setIsUser] = useState(true);
+  const [isBusinessOwner, setIsBusinessOwner] = useState(false);
 
   const auth = FIREBASE_AUTH;
 
@@ -47,9 +48,10 @@ const Register = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior="padding">
+      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingContainer}>
         <View style={styles.form}>
           <Text style={styles.heading}>Register</Text>
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Name</Text>
             <TextInput
@@ -59,6 +61,7 @@ const Register = () => {
               placeholder="Name"
             />
           </View>
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
             <TextInput
@@ -68,6 +71,7 @@ const Register = () => {
               placeholder="Email"
             />
           </View>
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
             <TextInput
@@ -78,9 +82,30 @@ const Register = () => {
               secureTextEntry
             />
           </View>
+
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              title="User"
+              checked={isUser}
+              onPress={() => {
+                setIsUser(!isUser);
+                setIsBusinessOwner(false);
+              }}
+            />
+            <CheckBox
+              title="Business Owner"
+              checked={isBusinessOwner}
+              onPress={() => {
+                setIsBusinessOwner(!isBusinessOwner);
+                setIsUser(false);
+              }}
+            />
+          </View>
+
           <Text style={error ? styles.errorText : styles.defaultText}>
             {error ? error.message : "Please fill in the blanks"}
           </Text>
+
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
@@ -97,6 +122,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 100,
   },
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   form: {
     flex: 1,
     justifyContent: "center",
@@ -106,6 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
   },
   inputContainer: {
     marginBottom: 20,
@@ -113,7 +142,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 8, // Increased space between labels
   },
   input: {
     borderWidth: 1,
@@ -121,11 +150,20 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   errorText: {
     color: "#FF0000",
+    textAlign: "center",
+    marginTop: 10,
   },
   defaultText: {
     color: "black",
+    textAlign: "center",
+    marginTop: 10,
   },
   button: {
     backgroundColor: "#007AFF",
