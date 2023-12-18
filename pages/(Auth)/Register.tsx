@@ -7,14 +7,13 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-
 import { FIREBASE_AUTH } from "../../lib/firebaseConfig";
 
 const Register = () => {
@@ -23,6 +22,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error>();
+  const [isUser, setIsUser] = useState(true);
+  const [isBusinessOwner, setIsBusinessOwner] = useState(false);
 
   const auth = FIREBASE_AUTH;
 
@@ -78,6 +79,24 @@ const Register = () => {
               secureTextEntry
             />
           </View>
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              title="User"
+              checked={isUser}
+              onPress={() => {
+                setIsUser(!isUser);
+                setIsBusinessOwner(false);
+              }}
+            />
+            <CheckBox
+              title="Business Owner"
+              checked={isBusinessOwner}
+              onPress={() => {
+                setIsBusinessOwner(!isBusinessOwner);
+                setIsUser(false);
+              }}
+            />
+          </View>
           <Text style={error ? styles.errorText : styles.defaultText}>
             {error ? error.message : "Please fill in the blanks"}
           </Text>
@@ -120,6 +139,11 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
   },
   errorText: {
     color: "#FF0000",
