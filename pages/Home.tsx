@@ -5,6 +5,8 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  Text,
+  TouchableOpacity,
 } from "react-native";
 import { getDocs, collection } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
@@ -24,7 +26,7 @@ const Home = () => {
   const [items, setItems] = useState<any[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
   const navigation = useNavigation<NavigationProp>();
@@ -54,6 +56,18 @@ const Home = () => {
     setFilteredItems(filtered);
   };
 
+  const handleStatusFilter = (status: string | null) => {
+    setSelectedStatus(status);
+    if (status === null) {
+      //Here can you see all the items
+      setFilteredItems(items);
+    } else {
+      // You can see the selected items
+      const filtered = items.filter((item) => item.status === status);
+      setFilteredItems(filtered);
+    }
+  };
+
   return (
     <ScrollView
       refreshControl={
@@ -62,18 +76,59 @@ const Home = () => {
       contentContainerStyle={styles.container}
     >
       {refreshing ? <ActivityIndicator /> : null}
-      <View style={styles.searchBar}>
-        <SearchBar onSearch={handleSearch} />
-        <CreateItemButton
-          styles={styles.createItemButton}
-          onPress={() => navigation.navigate("UploadItem")}
-        />
-      </View>
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              selectedStatus === null && styles.selectedFilter,
+            ]}
+            onPress={() => handleStatusFilter(null)}
+          >
+            <Text>Alle</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              selectedStatus === "lost" && styles.selectedFilter,
+            ]}
+            onPress={() => handleStatusFilter("lost")}
+          >
+            <Text>Lost</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              selectedStatus === "pending" && styles.selectedFilter,
+            ]}
+            onPress={() => handleStatusFilter("pending")}
+          >
+            <Text>Pending</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.filterButton,
+              selectedStatus === "found" && styles.selectedFilter,
+            ]}
+            onPress={() => handleStatusFilter("found")}
+          >
+            <Text>Found</Text>
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.itemContainer}>
-        {filteredItems.map((item, index) => (
-          <ItemCard key={index} item={item} />
-        ))}
+        <View style={styles.searchBar}>
+          <SearchBar onSearch={handleSearch} />
+          <CreateItemButton
+            styles={styles.createItemButton}
+            onPress={() => navigation.navigate("UploadItem")}
+          />
+        </View>
+
+        <View style={styles.itemContainer}>
+          {filteredItems.map((item, index) => (
+            <ItemCard key={index} item={item} />
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
@@ -81,7 +136,7 @@ const Home = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 5,
   },
   itemContainer: {
     flexDirection: "row",
@@ -89,17 +144,24 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   searchBar: {
-    flex: 1,
     flexDirection: "row",
     justifyContent: "center",
     gap: 16,
     alignItems: "center",
-
     marginBottom: 16,
   },
   createItemButton: {
     alignSelf: "center",
     marginBottom: 16,
+  },
+  filterButton: {
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    marginRight: 10,
+  },
+  selectedFilter: {
+    backgroundColor: "#3498db", // Pas de kleur aan naar jouw voorkeur
   },
 });
 
