@@ -56,11 +56,11 @@ const Register = () => {
 
       // Verzamel gebruikersgegevens om naar Firestore te sturen
       const userData = {
-        uid: userCredential.user.uid,
-        firstName: firstName,
-        lastName: lastName,
+        UID: userCredential.user.uid,
+        Voornaam: firstName,
+        Achternaam: lastName,
         email: email,
-        role: isBusinessOwner ? "businessOwner" : "user",
+        role: isBusinessOwner ? "Owner" : "User",
       };
 
       // Set gebruikersgegevens, inclusief de rol
