@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { getDocs, collection } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
-
 import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
 import { useNavigation } from "@react-navigation/native";
