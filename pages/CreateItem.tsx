@@ -22,6 +22,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { decode } from "base-64";
 import React from "react";
+import { getAuth } from "firebase/auth";
 
 if (typeof atob === "undefined") {
   global.atob = decode;
@@ -50,6 +51,8 @@ const CreateItem = () => {
     );
     console.log(uploadResp);
 
+    const userID = getAuth().currentUser?.uid;
+
     try {
       const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
         created_at: new Date().toLocaleString(),
@@ -59,6 +62,7 @@ const CreateItem = () => {
         location_lost: itemLocation,
         image_url: filename || "https://via.placeholder.com/150",
         status: "lost",
+        user_id: userID,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
