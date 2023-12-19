@@ -16,11 +16,8 @@ function HomeStack() {
 
   return (
     <HomeInsideStack.Navigator>
-      <HomeInsideStack.Screen
-        name="Home"
-        component={Home}
-        options={{ headerShown: false }}
-      />
+      <HomeInsideStack.Screen name="Home" component={Home} />
+      <HomeInsideStack.Screen name="ItemDetail" component={ItemDetail} />
       <HomeInsideStack.Group screenOptions={{ presentation: "modal" }}>
         <HomeInsideStack.Screen
           name="UploadItem"
@@ -36,8 +33,9 @@ import Users from "../pages/admin/Users";
 import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
+import ItemDetail from "./ItemDetail";
 
-export const InsideNavigation = ({ navigation }: any) => {
+export const InsideNavigation = () => {
   const InsideStack = createBottomTabNavigator();
 
   return (
@@ -59,7 +57,11 @@ export const InsideNavigation = ({ navigation }: any) => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen name="Home Page" component={HomeStack} />
+      <InsideStack.Screen
+        name="Home Page"
+        component={HomeStack}
+        options={{ headerShown: false }}
+      />
       <InsideStack.Screen name="Profile" component={Profile} />
       <InsideStack.Screen
         name="UsersStack"
