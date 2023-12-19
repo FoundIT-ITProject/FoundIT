@@ -126,7 +126,7 @@ const Home = () => {
 
         <View style={styles.itemContainer}>
           {filteredItems.map((item, index) => (
-            <ItemCard key={index} item={item} />
+            <ItemCard key={index} item={item} navigation={navigation} />
           ))}
         </View>
       </View>
