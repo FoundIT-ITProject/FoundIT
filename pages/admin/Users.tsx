@@ -19,7 +19,6 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home Screen</Text>
       <Button title="Go to Regular Page" onPress={handleRegularButtonClick} />
       <Button title="Go to Owner Page" onPress={handleOwnerButtonClick} />
       <Button title="Go to Admin Page" onPress={handleAdminButtonClick} />
