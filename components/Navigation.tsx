@@ -36,7 +36,7 @@ import Users from "../pages/admin/Users";
 import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
-import AdminPage from "../pages/AdminPage";
+import AdminPage from "../pages/adminpage";
 import OwnerPage from "../pages/OwnerPage";
 
 export const InsideNavigation = ({ navigation }: any) => {
