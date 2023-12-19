@@ -4,6 +4,7 @@ import { ItemData } from "../lib/types";
 import { useNavigation } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
+import { schedulePushNotification } from "./Notifications";
 
 const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
@@ -31,7 +32,11 @@ const ItemDetail = ({ route }: { route: any }) => {
       console.error("Error updating item:", error);
     } finally {
     }
+
+    
   };
+
+  
 
   return (
     <View style={styles.container}>

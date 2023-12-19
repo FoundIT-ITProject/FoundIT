@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
@@ -16,6 +16,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ItemData } from "../lib/types";
+
 type RootStackParamList = {
   Home: undefined;
   UploadItem: undefined;
