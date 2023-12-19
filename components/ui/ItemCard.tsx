@@ -2,8 +2,15 @@ import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import React from "react";
 import { useState, useEffect } from "react";
 import { StyleSheet, View, Image, TouchableOpacity, Text } from "react-native";
+import { ItemData } from "../../lib/types";
 
-const ItemCard = ({ item }: { item: any }) => {
+const ItemCard = ({
+  item,
+  navigation,
+}: {
+  item: ItemData;
+  navigation: any;
+}) => {
   const [imageUrl, setImageUrl] = useState("https://via.placeholder.com/150");
 
   useEffect(() => {
@@ -20,10 +27,14 @@ const ItemCard = ({ item }: { item: any }) => {
     };
 
     fetchImage();
-  }, [item.imageName]);
+  }, [item]);
+
+  const navigateToDetail = () => {
+    navigation.navigate("ItemDetail", { item, imageUrl }); // Pass the item as a parameter
+  };
 
   return (
-    <TouchableOpacity style={styles.cardContainer}>
+    <TouchableOpacity onPress={navigateToDetail} style={styles.cardContainer}>
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>{item.item_name}</Text>
         <Image source={{ uri: imageUrl }} style={styles.cardImage} />
