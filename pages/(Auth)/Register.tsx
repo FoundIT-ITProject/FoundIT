@@ -10,12 +10,8 @@ import {
 import { CheckBox } from "react-native-elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../lib/firebaseConfig";
-import SignInWithGoogleButton from "./SignInWithGoogleButton";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -49,7 +45,10 @@ const Register = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingContainer}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={styles.keyboardAvoidingContainer}
+      >
         <View style={styles.form}>
           <Text style={styles.heading}>Register</Text>
 
@@ -110,7 +109,6 @@ const Register = () => {
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Sign up</Text>
           </TouchableOpacity>
-          <SignInWithGoogleButton />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
