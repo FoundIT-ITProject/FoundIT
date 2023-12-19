@@ -13,9 +13,10 @@ import { FIREBASE_DB } from "../lib/firebaseConfig";
 
 import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ItemData } from "../lib/types";
 type RootStackParamList = {
   Home: undefined;
   UploadItem: undefined;
@@ -23,7 +24,7 @@ type RootStackParamList = {
 };
 
 const Home = () => {
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<ItemData[]>([]);
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -36,7 +37,7 @@ const Home = () => {
       const itemsCollection = collection(FIREBASE_DB, "Items");
       const querySnapshot = await getDocs(itemsCollection);
 
-      const fetchedItems = querySnapshot.docs.map((doc) => doc.data());
+      const fetchedItems: any[] = querySnapshot.docs.map((doc) => doc.data());
 
       setItems(fetchedItems);
       setFilteredItems(fetchedItems); // Initial state is set to all items
@@ -48,6 +49,12 @@ const Home = () => {
   useEffect(() => {
     fetchItems();
   }, [refreshing]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchItems();
+    }, [])
+  );
 
   const handleSearch = (searchTerm: string) => {
     const filtered = items.filter((item) =>
