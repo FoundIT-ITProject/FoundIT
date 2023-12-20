@@ -7,9 +7,12 @@ import {
   ActivityIndicator,
   Text,
   TouchableOpacity,
+  Dimensions,
+  Modal,
 } from "react-native";
 import { getDocs, collection } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
+import { Ionicons } from "@expo/vector-icons";
 
 import SearchBar from "../components/ui/SearchBar";
 import ItemCard from "../components/ui/ItemCard";
@@ -17,6 +20,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ItemData } from "../lib/types";
+import FilterButton from "../components/ui/FilterButton";
+import FilterSwitches from "../components/FilterSwitches";
 type RootStackParamList = {
   Home: undefined;
   UploadItem: undefined;
@@ -28,6 +33,22 @@ const Home = () => {
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
+  // This is because height of phones vary
+  const windowHeight = Dimensions.get("window").height;
+
+  // This state would determine if the drawer sheet is visible or not
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  // Function to open the bottom sheet
+  const handleOpenBottomSheet = () => {
+    setIsBottomSheetOpen(true);
+  };
+
+  // Function to close the bottom sheet
+  const handleCloseBottomSheet = () => {
+    setIsBottomSheetOpen(false);
+  };
   type NavigationProp = NativeStackNavigationProp<RootStackParamList, "Home">;
 
   const navigation = useNavigation<NavigationProp>();
@@ -85,45 +106,10 @@ const Home = () => {
       {refreshing ? <ActivityIndicator /> : null}
       <View style={styles.container}>
         <View style={styles.searchBar}>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedStatus === null && styles.selectedFilter,
-            ]}
-            onPress={() => handleStatusFilter(null)}
-          >
-            <Text>Alle</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedStatus === "lost" && styles.selectedFilter,
-            ]}
-            onPress={() => handleStatusFilter("lost")}
-          >
-            <Text>Lost</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedStatus === "pending" && styles.selectedFilter,
-            ]}
-            onPress={() => handleStatusFilter("pending")}
-          >
-            <Text>Pending</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.filterButton,
-              selectedStatus === "found" && styles.selectedFilter,
-            ]}
-            onPress={() => handleStatusFilter("found")}
-          >
-            <Text>Found</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.searchBar}>
+          <FilterButton
+            onPress={handleOpenBottomSheet}
+            styles={styles.createItemButton}
+          />
           <SearchBar onSearch={handleSearch} />
           <CreateItemButton
             styles={styles.createItemButton}
@@ -136,6 +122,30 @@ const Home = () => {
             <ItemCard key={index} item={item} navigation={navigation} />
           ))}
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isBottomSheetOpen}
+          onRequestClose={handleCloseBottomSheet}
+        >
+          <View style={[styles.bottomSheet, { height: windowHeight * 0.4 }]}>
+            <View style={styles.modalCloseButton}>
+              <Text style={styles.modalTitle}>Select Filter</Text>
+              <TouchableOpacity onPress={handleCloseBottomSheet}>
+                <Ionicons
+                  name="md-close-circle-sharp"
+                  size={38}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+            <FilterSwitches
+              selectedStatus={selectedStatus}
+              handleStatusFilter={handleStatusFilter}
+            />
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -152,7 +162,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     gap: 16,
     alignItems: "center",
     marginBottom: 16,
@@ -168,7 +178,34 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   selectedFilter: {
-    backgroundColor: "#3498db", // Pas de kleur aan naar jouw voorkeur
+    backgroundColor: "#3498db", // Change the color to your preference
+  },
+  // Modal styles
+  bottomSheet: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    paddingVertical: 23,
+    paddingHorizontal: 25,
+    bottom: 0,
+    borderWidth: 1,
+    borderColor: "red",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  modalCloseButton: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
   },
 });
 
