@@ -37,6 +37,7 @@ import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
 import RegularDetailsPage from "../pages/admin/users/detail/RegularDetailsPage";
+import AdminDetailsPage from "../pages/admin/users/detail/AdminDetailsPage";
 
 export const InsideNavigation = ({ navigation }: any) => {
   const InsideStack = createBottomTabNavigator();
@@ -81,6 +82,7 @@ const UsersAdmin = () => {
       <Stack.Screen name="Owner" component={Owner} />
       <Stack.Screen name="Admin" component={Admin} />
       <Stack.Screen name="RegularDetailsPage" component={RegularDetailsPage} />
+      <Stack.Screen name="AdminDetailsPage" component={AdminDetailsPage} />
     </Stack.Navigator>
   );
 };

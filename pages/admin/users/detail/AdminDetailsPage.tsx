@@ -6,20 +6,20 @@ import { doc, updateDoc } from 'firebase/firestore';
 const RegularDetailsPage = ({ route, navigation }: { route: any; navigation: any }) => {
   const { email, voornaam, achternaam, uid } = route.params;
 
-  const handlePromote = async () => {
+  const handleDiscard = async () => {
     try {
       
       const userDocRef = doc(FIREBASE_DB, 'Users', uid);
       await updateDoc(userDocRef, {
-        role: 'Admin',
+        role: 'User',
       });
 
 
-      Alert.alert('User Promoted to Admin', 'The user has been successfully Promoted.');
+      Alert.alert('Admin Discarded to User', 'The user has been successfully discarded.');
       navigation.goBack();
     } catch (error) {
-      console.error('Error promoting user:', error);
-      Alert.alert('Error', 'An error occurred while promoting the user. Please try again.');
+      console.error('Error discarding user:', error);
+      Alert.alert('Error', 'An error occurred while discarding the user. Please try again.');
     }
   };
 
@@ -57,8 +57,8 @@ const RegularDetailsPage = ({ route, navigation }: { route: any; navigation: any
         <Text style={styles.value}>{uid}</Text>
       </View>
 
-  <TouchableOpacity style={styles.PromoteButton} onPress={handlePromote}>
-        <Text style={styles.deleteButtonText}>Promote to Admin</Text>
+  <TouchableOpacity style={styles.DiscardButton} onPress={handleDiscard}>
+        <Text style={styles.deleteButtonText}>Discard to User</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
- PromoteButton: {
-backgroundColor: 'green',
+ DiscardButton: {
+backgroundColor: '#FFA500',
     paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 5,  },

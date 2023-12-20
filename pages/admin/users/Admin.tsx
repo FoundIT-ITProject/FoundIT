@@ -32,7 +32,7 @@ const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
   }, [fetchUserDetails]);
 
   const handleEmailPress = (user) => {
-    navigation.navigate("RegularDetailsPage", {
+    navigation.navigate("AdminDetailsPage", {
       email: user.email,
       voornaam: user.voornaam,
       achternaam: user.achternaam,
