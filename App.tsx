@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { InsideNavigation, OutsideNavigation } from "./components/Navigation";
-
+import { usePushNotifications } from "./components/Notifications";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "./lib/firebaseConfig";
 import React from "react";
@@ -12,6 +11,9 @@ import React from "react";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
+  const {expoPushToken} = usePushNotifications()
+  console.log(expoPushToken);
+  
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {

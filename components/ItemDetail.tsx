@@ -4,7 +4,7 @@ import { ItemData } from "../lib/types";
 import { useNavigation } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
-import { schedulePushNotification } from "./Notifications";
+import { usePushNotifications } from "./Notifications";
 
 const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
