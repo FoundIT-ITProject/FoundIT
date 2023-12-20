@@ -1,28 +1,27 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { FIREBASE_AUTH, FIREBASE_DB } from '../../../../lib/firebaseConfig'; // Adjust the import path accordingly
-import { deleteUser, getAuth } from "firebase/auth";
+import { FIREBASE_DB } from '../../../../lib/firebaseConfig';
+import { doc, updateDoc } from 'firebase/firestore';
+
 const RegularDetailsPage = ({ route, navigation }: { route: any; navigation: any }) => {
   const { email, voornaam, achternaam, uid } = route.params;
 
   const handleDelete = async () => {
+    try {
+      
+      const userDocRef = doc(FIREBASE_DB, 'Users', uid);
+      await updateDoc(userDocRef, {
+        role: 'Blocked',
+      });
 
 
-const auth = getAuth();
-const user = auth.currentUser?.email
-console.log(email);
-/*
-deleteUser(user).then(() => {
-  // User deleted.
-}).catch((error) => {
-  // An error ocurred
-  // ...
-});
-  */
-
+      Alert.alert('User Blocked', 'The user has been successfully blocked.');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error blocking user:', error);
+      Alert.alert('Error', 'An error occurred while blocking the user. Please try again.');
+    }
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -41,7 +40,7 @@ deleteUser(user).then(() => {
       </View>
 
       <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-        <Text style={styles.deleteButtonText}>Delete User</Text>
+        <Text style={styles.deleteButtonText}>Block User</Text>
       </TouchableOpacity>
     </View>
   );
@@ -49,7 +48,7 @@ deleteUser(user).then(() => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     padding: 20,
     justifyContent: 'center',
   },

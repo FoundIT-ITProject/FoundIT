@@ -63,15 +63,15 @@ export const InsideNavigation = ({ navigation }: any) => {
       <InsideStack.Screen name="Home Page" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
       <InsideStack.Screen
-        name="UsersStack"
-        component={UsersStack}
+        name="Users Panel"
+        component={UsersAdmin}
         options={{ headerShown: false }}
       />
     </InsideStack.Navigator>
   );
 };
 
-const UsersStack = () => {
+const UsersAdmin = () => {
   const Stack = createNativeStackNavigator();
 
   return (
