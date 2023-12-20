@@ -30,12 +30,29 @@ function HomeStack() {
   );
 }
 
+
+// Inside The Admin role Page
 import Users from "../pages/admin/Users";
 import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
+import RegularDetailsPage from "../pages/admin/users/detail/RegularDetailsPage";
+import AdminDetailsPage from "../pages/admin/users/detail/AdminDetailsPage";
 
-import AdminPage from "../pages/adminpage";
+
+// Admin menu role
+import HomeAdmin from "../pages/admin/HomeAdmin";
+import ItemDetailAdmin from "../pages/admin/ItemdetailAdmin";
+
+
+
+
+
+
+
+
+
+// Role Pages
 import OwnerPage from "../pages/OwnerPage";
 
 export const UserNavigation = () => {
@@ -79,6 +96,8 @@ const UsersStack = () => {
       <Stack.Screen name="Regular" component={Regular} />
       <Stack.Screen name="Owner" component={Owner} />
       <Stack.Screen name="Admin" component={Admin} />
+      <Stack.Screen name="RegularDetailsPage" component={RegularDetailsPage} />
+      <Stack.Screen name="AdminDetailsPage" component={AdminDetailsPage} />
     </Stack.Navigator>
   );
 };
@@ -128,17 +147,36 @@ export const AdminNavigation = () => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <AdminStack.Screen name="Home Page" component={HomeStack} />
+      <AdminStack.Screen name="Home Page" component={AdminHomeStack} />
       <AdminStack.Screen name="Profile" component={Profile} />
       <AdminStack.Screen
-        name="UsersStack"
+        name="Managment"
         component={UsersStack}
         options={{ headerShown: false }}
       />
-      <AdminStack.Screen name="Admin Page" component={AdminPage} />
     </AdminStack.Navigator>
   );
 };
+
+
+const AdminHomeStack = () => {
+  const AdminHomeStack = createNativeStackNavigator();
+
+  return (
+    <AdminHomeStack.Navigator>
+      <AdminHomeStack.Screen name="Home" component={HomeAdmin} />
+      <AdminHomeStack.Screen name="ItemDetailAdmin" component={ItemDetailAdmin} />
+      <AdminHomeStack.Group screenOptions={{ presentation: "modal" }}>
+        <AdminHomeStack.Screen
+          name="UploadItem"
+          component={CreateItem}
+          options={{ headerShown: false }}
+        />
+      </AdminHomeStack.Group>
+    </AdminHomeStack.Navigator>
+  );
+};
+
 
 export const OwnerNavigation = () => {
   const OwnerStack = createBottomTabNavigator();
