@@ -17,6 +17,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ItemData } from "../lib/types";
+import FilterButton from "../components/ui/FilterButton";
 type RootStackParamList = {
   Home: undefined;
   UploadItem: undefined;
@@ -124,6 +125,7 @@ const Home = () => {
         </View>
 
         <View style={styles.searchBar}>
+          <FilterButton styles={styles.createItemButton} />
           <SearchBar onSearch={handleSearch} />
           <CreateItemButton
             styles={styles.createItemButton}
