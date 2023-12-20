@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { InsideNavigation, OutsideNavigation, AdminNavigation, OwnerNavigation } from "./components/Navigation";
+import {
+  OutsideNavigation,
+  AdminNavigation,
+  OwnerNavigation,
+  UserNavigation,
+} from "./components/Navigation";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DB } from "./lib/firebaseConfig";
 import React from "react";
@@ -43,35 +48,33 @@ export default function App() {
 
   return (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login">
-      {userRole === "admin" ? (
-        <Stack.Screen
-          name="AdminPage"
-          component={AdminNavigation}
-          options={{ headerShown: false }}
-        />
-      ) : userRole === "User" ? (
-        <Stack.Screen
-          name="InsideStackScreen"
-          component={InsideNavigation}
-          options={{ headerShown: false }}
-        />
-      ) : userRole === "Owner" ? 
-      (
-        <Stack.Screen
-        name="OwnerStack"
-        component={OwnerNavigation}
-        options={{headerShown:false}}
-        />
-      ): (
-        <Stack.Screen
-          name="OutsideStackScreen"
-          component={OutsideNavigation}
-          options={{ headerShown: false }}
-        />
-      )}
-    </Stack.Navigator>
-  </NavigationContainer>
-  
+      <Stack.Navigator initialRouteName="Login">
+        {user && userRole === "admin" ? (
+          <Stack.Screen
+            name="AdminPage"
+            component={AdminNavigation}
+            options={{ headerShown: false }}
+          />
+        ) : user && userRole === "User" ? (
+          <Stack.Screen
+            name="InsideStackScreen"
+            component={UserNavigation}
+            options={{ headerShown: false }}
+          />
+        ) : user && userRole === "Owner" ? (
+          <Stack.Screen
+            name="OwnerStack"
+            component={OwnerNavigation}
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <Stack.Screen
+            name="OutsideStackScreen"
+            component={OutsideNavigation}
+            options={{ headerShown: false }}
+          />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }

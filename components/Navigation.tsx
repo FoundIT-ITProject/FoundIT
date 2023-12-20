@@ -38,12 +38,11 @@ import Admin from "../pages/admin/users/Admin";
 import AdminPage from "../pages/adminpage";
 import OwnerPage from "../pages/OwnerPage";
 
-
-export const InsideNavigation = () => {
-  const InsideStack = createBottomTabNavigator();
+export const UserNavigation = () => {
+  const UserStack = createBottomTabNavigator();
 
   return (
-    <InsideStack.Navigator
+    <UserStack.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any = "home";
@@ -61,18 +60,13 @@ export const InsideNavigation = () => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen
+      <UserStack.Screen
         name="Home Page"
         component={HomeStack}
         options={{ headerShown: false }}
       />
-      <InsideStack.Screen name="Profile" component={Profile} />
-      <InsideStack.Screen
-        name="UsersStack"
-        component={UsersStack}
-        options={{ headerShown: false }}
-      />
-    </InsideStack.Navigator>
+      <UserStack.Screen name="Profile" component={Profile} />
+    </UserStack.Navigator>
   );
 };
 
@@ -141,10 +135,10 @@ export const AdminNavigation = () => {
         component={UsersStack}
         options={{ headerShown: false }}
       />
-      <AdminStack.Screen name="Admin Page" component={AdminPage}/>
+      <AdminStack.Screen name="Admin Page" component={AdminPage} />
     </AdminStack.Navigator>
-  )
-}
+  );
+};
 
 export const OwnerNavigation = () => {
   const OwnerStack = createBottomTabNavigator();
@@ -175,7 +169,7 @@ export const OwnerNavigation = () => {
         component={UsersStack}
         options={{ headerShown: false }}
       />
-      <OwnerStack.Screen name="Owner Page" component={OwnerPage}/>
+      <OwnerStack.Screen name="Owner Page" component={OwnerPage} />
     </OwnerStack.Navigator>
-  )
-}
+  );
+};
