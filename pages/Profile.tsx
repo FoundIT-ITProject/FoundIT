@@ -37,8 +37,12 @@ import {
 } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
+  
+  const navigation = useNavigation();
+
   const auth = getAuth(FIREBASE_APP);
   const currentUser: User | null = auth.currentUser;
 
@@ -83,43 +87,54 @@ const Profile = () => {
     fetchUserData();
   }, [currentUser]);
 
-  const handleFirstNameUpdate = async () => {
-    try {
-      if (currentUser) {
-        const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-        await setDoc(userDocRef, { Voornaam: firstName }, { merge: true });
-        console.log("First Name Updated!");
-      }
-    } catch (error: any) {
-      console.error("Error updating first name:", error.message);
-    }
-  };
-  const handleFirstNameIconClick = () => {
+  
+  const handleFirstNameIconClick = async () => {
     setShowFirstNameInput((prev) => !prev);
-    if (showFirstNameInput) handleFirstNameUpdate();
-  };
-
-  const handleLastNameUpdate = async () => {
-    try {
-      if (currentUser) {
-        const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-        await setDoc(userDocRef, { Achternaam: lastName }, { merge: true });
-        console.log("Last Name Updated!");
+    if (showFirstNameInput) {
+      try {
+        if (currentUser) {
+          const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+  
+          await setDoc(userDocRef, { Voornaam: firstName }, { merge: true });
+          console.log("First Name Updated!");
+        }
+      } catch (error) {
+        console.error("Error updating first name:", error.message);
       }
-    } catch (error: any) {
-      console.error("Error updating last name:", error.message);
     }
   };
-  const handleLastNameIconClick = () => {
+  
+  const handleLastNameIconClick = async () => {
     setShowLastNameInput((prev) => !prev);
-    if (showLastNameInput) handleLastNameUpdate();
+    if (showLastNameInput) {
+      try {
+        if (currentUser) {
+          const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+  
+          await setDoc(userDocRef, { Achternaam: lastName }, { merge: true });
+          console.log("Last Name Updated!");
+        }
+      } catch (error:any) {
+        console.error("Error updating last name:", error.message);
+      }
+    }
   };
-
-  const handleEmailIconClick = () => {
+  
+  const handleEmailIconClick = async () => {
     setShowEmailInput((prev) => !prev);
-    if (showEmailInput) handleChangeEmail();
+    if (showEmailInput) {
+      try {
+        if (currentUser) {
+          const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
+  
+          await setDoc(userDocRef, { email: email }, { merge: true });
+          console.log("Email Updated!");
+        }
+      } catch (error:any) {
+        console.error("Error updating email:", error.message);
+      }
+    }
   };
-
   const handleOpenEmailModal = () => {
     setShowEmailModal(true);
   };
@@ -201,6 +216,10 @@ const Profile = () => {
     } catch (error: any) {
       console.error("Error logging out:", error.message);
     }
+  };
+
+  const handleMyItems = () => {
+    navigation.navigate("MyItems");
   };
 
   return (
@@ -400,6 +419,15 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
+
+      <TouchableOpacity
+      //style={styles.myItemsButton}
+      onPress={handleMyItems}
+    >
+      <Text 
+     // style={styles.myItemsButtonText}
+      >My Items</Text>
+    </TouchableOpacity>
     </SafeAreaView>
   );
 };

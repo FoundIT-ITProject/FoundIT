@@ -12,11 +12,14 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
+
 import * as ImagePicker from "expo-image-picker";
 
 import { useState } from "react";
 
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { FIREBASE_DB, uploadToFirebase } from "../lib/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
@@ -52,9 +55,12 @@ const CreateItem = () => {
     console.log(uploadResp);
 
     const userID = getAuth().currentUser?.uid;
+    const itemID = uuidv4();
 
     try {
-      const docRef = await addDoc(collection(FIREBASE_DB, "Items"), {
+      const docRefSet = doc(FIREBASE_DB, "Items", itemID);
+
+      await setDoc(docRefSet, {
         created_at: new Date().toLocaleString(),
         date_lost: date?.toLocaleString(),
         item_name: itemName,
@@ -63,8 +69,8 @@ const CreateItem = () => {
         image_url: filename || "https://via.placeholder.com/150",
         status: "lost",
         user_id: userID,
+        item_id: itemID,
       });
-      console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
