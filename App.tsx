@@ -8,10 +8,10 @@ import { User, onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "./lib/firebaseConfig";
 import React from "react";
 
+
 export default function App() {
   const Stack = createNativeStackNavigator();
-
-  const {expoPushToken} = usePushNotifications()
+  const {expoPushToken} = usePushNotifications();
   console.log(expoPushToken);
   
   const [user, setUser] = useState<User | null>(null);

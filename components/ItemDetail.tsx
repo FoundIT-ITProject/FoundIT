@@ -5,10 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 import { usePushNotifications } from "./Notifications";
+import { scheduleNotificationAsync } from "expo-notifications";
 
 const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
   const navigation = useNavigation();
+  const {expoPushToken} = usePushNotifications();
+  console.log(expoPushToken);
 
   const redeamItem = async (item: ItemData) => {
     const itemRef = doc(FIREBASE_DB, "Items", item.item_id);
@@ -28,6 +31,8 @@ const ItemDetail = ({ route }: { route: any }) => {
       await updateDoc(itemRef, {
         status: "pending",
       });
+
+
     } catch (error) {
       console.error("Error updating item:", error);
     } finally {
@@ -62,9 +67,10 @@ const ItemDetail = ({ route }: { route: any }) => {
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
+          onPress={async () => {
             redeamItem(item);
             navigation.goBack();
+            await schedulePushNotification();
           }}
         >
           <Text style={{ color: "#fff" }}>
@@ -75,6 +81,17 @@ const ItemDetail = ({ route }: { route: any }) => {
     </View>
   );
 };
+
+async function schedulePushNotification() {
+  await scheduleNotificationAsync({
+    content: {
+      title: "Proficiat !",
+      body: 'De product is verplaatst ',
+      data: { data: 'goes here' },
+    },
+    trigger: { seconds: 1 },
+  });
+}
 
 const styles = StyleSheet.create({
   container: {
