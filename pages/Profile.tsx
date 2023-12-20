@@ -40,6 +40,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import ItemPage from '../components/ItemPage';
 
+
 const Profile = () => {
 
   const navigation = useNavigation();
@@ -429,7 +430,10 @@ const Profile = () => {
       </Modal>
 
       <TouchableOpacity style={styles.myItemsButton} onPress={handleMyItemsClick}>
-        <Text>My Items</Text>
+        <View style={styles.lostAndFoundBox}>
+          <View style={styles.boxTop}></View>
+          <Text style={styles.myItemsText}>My Items </Text>
+        </View>
       </TouchableOpacity>
 
       {showMyItemsModal && (
@@ -510,6 +514,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
+
   },
 
   confirmButton: {
@@ -585,11 +590,37 @@ const styles = StyleSheet.create({
   },
   myItemsButton: {
     position: "absolute",
-    bottom: 2, 
+    bottom: 1, 
     width: "100%",
     alignItems: "center",
+
   },
+  lostAndFoundBox: {
+    width: 100,
+    height: 70,
+    backgroundColor: "#999",
+    borderRadius: 3,
+    overflow: "hidden",
+    marginBottom: 7,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
 
+  },
+  boxTop: {
+    height: 15, 
+    width: "100%",
+    backgroundColor: "#888",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10, 
+    position: "absolute",
+    top: 0,
+  },
+  myItemsText: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 10,
+    justifyContent: "center",
+  },
 });
-
 export default Profile;
