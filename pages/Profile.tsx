@@ -38,9 +38,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import ItemPage from '../components/ItemPage';
 
 const Profile = () => {
-  
+
   const navigation = useNavigation();
 
   const auth = getAuth(FIREBASE_APP);
@@ -65,6 +66,8 @@ const Profile = () => {
   const [showLastNameInput, setShowLastNameInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
 
+  const [showMyItemsModal, setShowMyItemsModal] = useState(false);
+
   useEffect(() => {
     async function fetchUserData() {
       try {
@@ -87,50 +90,50 @@ const Profile = () => {
     fetchUserData();
   }, [currentUser]);
 
-  
+
   const handleFirstNameIconClick = async () => {
     setShowFirstNameInput((prev) => !prev);
     if (showFirstNameInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { Voornaam: firstName }, { merge: true });
           console.log("First Name Updated!");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error updating first name:", error.message);
       }
     }
   };
-  
+
   const handleLastNameIconClick = async () => {
     setShowLastNameInput((prev) => !prev);
     if (showLastNameInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { Achternaam: lastName }, { merge: true });
           console.log("Last Name Updated!");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error updating last name:", error.message);
       }
     }
   };
-  
+
   const handleEmailIconClick = async () => {
     setShowEmailInput((prev) => !prev);
     if (showEmailInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { email: email }, { merge: true });
           console.log("Email Updated!");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error updating email:", error.message);
       }
     }
@@ -218,8 +221,12 @@ const Profile = () => {
     }
   };
 
-  const handleMyItems = () => {
-    navigation.navigate("MyItems");
+  const handleMyItemsClick = () => {
+    setShowMyItemsModal(true);
+  };
+
+  const handleCloseMyItemsModal = () => {
+    setShowMyItemsModal(false);
   };
 
   return (
@@ -302,6 +309,7 @@ const Profile = () => {
               <Text>{email}</Text>
             </View>
           </View>
+
 
           <View style={styles.inputContainer}>
             <TouchableOpacity
@@ -420,14 +428,15 @@ const Profile = () => {
         </View>
       </Modal>
 
-      <TouchableOpacity
-      //style={styles.myItemsButton}
-      onPress={handleMyItems}
-    >
-      <Text 
-     // style={styles.myItemsButtonText}
-      >My Items</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.myItemsButton} onPress={handleMyItemsClick}>
+        <Text>My Items</Text>
+      </TouchableOpacity>
+
+      {showMyItemsModal && (
+        <View style={styles.modalContainer}>
+          <ItemPage onClose={handleCloseMyItemsModal} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -574,6 +583,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
   },
+  myItemsButton: {
+    position: "absolute",
+    bottom: 2, 
+    width: "100%",
+    alignItems: "center",
+  },
+
 });
 
 export default Profile;

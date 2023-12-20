@@ -92,7 +92,7 @@ const Home = () => {
             ]}
             onPress={() => handleStatusFilter(null)}
           >
-            <Text>Alle</Text>
+            <Text>All</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
