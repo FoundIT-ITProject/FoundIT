@@ -11,10 +11,10 @@ const ItemDetail = ({ route }: { route: any }) => {
 
   const redeamItem = async (item: ItemData) => {
     const itemRef = doc(FIREBASE_DB, "Items", item.item_id);
-    if (item.status === "found") {
+    if (item.status === "pending") {
       try {
         await updateDoc(itemRef, {
-          status: "pending",
+          status: "lost",
         });
       } catch (error) {
         console.error("Error updating item:", error);
@@ -25,7 +25,7 @@ const ItemDetail = ({ route }: { route: any }) => {
 
     try {
       await updateDoc(itemRef, {
-        status: "found",
+        status: "pending",
       });
     } catch (error) {
       console.error("Error updating item:", error);
