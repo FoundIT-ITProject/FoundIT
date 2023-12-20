@@ -64,7 +64,7 @@ export const InsideNavigation = ({ navigation }: any) => {
       <InsideStack.Screen name="Home Page" component={HomeStack} />
       <InsideStack.Screen name="Profile" component={Profile} />
       <InsideStack.Screen
-        name="Users Panel"
+        name="Managment"
         component={UsersAdmin}
         options={{ headerShown: false }}
       />
@@ -77,7 +77,7 @@ const UsersAdmin = () => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Users" component={Users} />
+      <Stack.Screen name="Managment Panel" component={Users} />
       <Stack.Screen name="Regular" component={Regular} />
       <Stack.Screen name="Owner" component={Owner} />
       <Stack.Screen name="Admin" component={Admin} />
