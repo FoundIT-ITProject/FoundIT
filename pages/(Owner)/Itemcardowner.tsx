@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { ItemData } from "../../lib/types";
 import { useNavigation } from "@react-navigation/native";
@@ -9,27 +9,21 @@ const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
   const navigation = useNavigation();
 
-  const redeamItem = async (item: ItemData) => {
+  const redeemItem = async (item: ItemData) => {
     const itemRef = doc(FIREBASE_DB, "Items", item.item_id);
-    if (item.status === "found") {
-      try {
-        await updateDoc(itemRef, {
-          status: "pending",
-        });
-      } catch (error) {
-        console.error("Error updating item:", error);
-      } finally {
-        return;
-      }
-    }
 
     try {
-      await updateDoc(itemRef, {
-        status: "found",
-      });
+      if (item.status === "pending") {
+        await updateDoc(itemRef, {
+          status: "found",
+        });
+        console.log("Item marked as found!");
+      } else {
+        // Handle other cases if needed
+        console.log("Item status is not pending, no update needed.");
+      }
     } catch (error) {
       console.error("Error updating item:", error);
-    } finally {
     }
   };
 
@@ -58,7 +52,7 @@ const ItemDetail = ({ route }: { route: any }) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            redeamItem(item);
+            redeemItem(item);
             navigation.goBack();
           }}
         >

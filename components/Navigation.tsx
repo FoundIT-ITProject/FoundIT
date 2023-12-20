@@ -38,6 +38,10 @@ import Admin from "../pages/admin/users/Admin";
 import AdminPage from "../pages/adminpage";
 import OwnerPage from "../pages/OwnerPage";
 
+import HomeOwner from "../pages/(Owner)/HomeOwner"
+import Itemcardowner from "../pages/(Owner)/Itemcardowner"
+
+
 export const UserNavigation = () => {
   const UserStack = createBottomTabNavigator();
 
@@ -137,6 +141,23 @@ export const AdminNavigation = () => {
       />
       <AdminStack.Screen name="Admin Page" component={AdminPage} />
     </AdminStack.Navigator>
+  );
+};
+const HomeOwnerStack = () => {
+  const HomeOwnerStack = createNativeStackNavigator();
+
+  return (
+    <HomeOwnerStack.Navigator>
+      <HomeOwnerStack.Screen name="Home" component={Home} />
+      <HomeOwnerStack.Screen name="ItemDetailOwner" component={Itemcardowner} />
+      <HomeOwnerStack.Group screenOptions={{ presentation: "modal" }}>
+        <HomeOwnerStack.Screen
+          name="UploadItem"
+          component={CreateItem}
+          options={{ headerShown: false }}
+        />
+      </HomeOwnerStack.Group>
+    </HomeOwnerStack.Navigator>
   );
 };
 
