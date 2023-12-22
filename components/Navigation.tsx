@@ -10,6 +10,7 @@ import Home from "../pages/Home";
 import Profile from "../pages/Profile";
 import CreateItem from "../pages/CreateItem";
 import ForgotPassword from "../pages/(Auth)/ForgotPassword";
+import ItemDetail from "./ItemDetail";
 
 function HomeStack() {
   const HomeInsideStack = createNativeStackNavigator();
@@ -33,13 +34,15 @@ import Users from "../pages/admin/Users";
 import Regular from "../pages/admin/users/Regular";
 import Owner from "../pages/admin/users/Owner";
 import Admin from "../pages/admin/users/Admin";
-import ItemDetail from "./ItemDetail";
 
-export const InsideNavigation = () => {
-  const InsideStack = createBottomTabNavigator();
+import AdminPage from "../pages/adminpage";
+import OwnerPage from "../pages/OwnerPage";
+
+export const UserNavigation = () => {
+  const UserStack = createBottomTabNavigator();
 
   return (
-    <InsideStack.Navigator
+    <UserStack.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: any = "home";
@@ -57,18 +60,13 @@ export const InsideNavigation = () => {
         tabBarInactiveTintColor: "grey",
       })}
     >
-      <InsideStack.Screen
+      <UserStack.Screen
         name="Home Page"
         component={HomeStack}
         options={{ headerShown: false }}
       />
-      <InsideStack.Screen name="Profile" component={Profile} />
-      <InsideStack.Screen
-        name="UsersStack"
-        component={UsersStack}
-        options={{ headerShown: false }}
-      />
-    </InsideStack.Navigator>
+      <UserStack.Screen name="Profile" component={Profile} />
+    </UserStack.Navigator>
   );
 };
 
@@ -105,5 +103,73 @@ export const OutsideNavigation = () => {
         options={{ headerShown: true, title: "Forgot Password" }}
       />
     </Stack.Navigator>
+  );
+};
+
+export const AdminNavigation = () => {
+  const AdminStack = createBottomTabNavigator();
+
+  return (
+    <AdminStack.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: any = "home";
+
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "calendar" : "calendar-outline";
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#FCA311",
+        tabBarInactiveTintColor: "grey",
+      })}
+    >
+      <AdminStack.Screen name="Home Page" component={HomeStack} />
+      <AdminStack.Screen name="Profile" component={Profile} />
+      <AdminStack.Screen
+        name="UsersStack"
+        component={UsersStack}
+        options={{ headerShown: false }}
+      />
+      <AdminStack.Screen name="Admin Page" component={AdminPage} />
+    </AdminStack.Navigator>
+  );
+};
+
+export const OwnerNavigation = () => {
+  const OwnerStack = createBottomTabNavigator();
+
+  return (
+    <OwnerStack.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: any = "home";
+
+          if (route.name === "Home") {
+            iconName = focused ? "home" : "home-outline";
+          } else if (route.name === "Profile") {
+            iconName = focused ? "calendar" : "calendar-outline";
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#FCA311",
+        tabBarInactiveTintColor: "grey",
+      })}
+    >
+      <OwnerStack.Screen name="Home Page" component={HomeStack} />
+      <OwnerStack.Screen name="Profile" component={Profile} />
+      <OwnerStack.Screen
+        name="UsersStack"
+        component={UsersStack}
+        options={{ headerShown: false }}
+      />
+      <OwnerStack.Screen name="Owner Page" component={OwnerPage} />
+    </OwnerStack.Navigator>
   );
 };
