@@ -56,7 +56,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-        {user && userRole === "admin" ? (
+        {user && userRole === "Admin" ? (
           <Stack.Screen
             name="AdminPage"
             component={AdminNavigation}
