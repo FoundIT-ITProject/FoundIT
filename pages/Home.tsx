@@ -10,7 +10,7 @@ import {
   Dimensions,
   Modal,
 } from "react-native";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -20,6 +20,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CreateItemButton from "../components/CreateItemButton";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ItemData } from "../lib/types";
+
 import FilterButton from "../components/ui/FilterButton";
 import FilterSwitches from "../components/FilterSwitches";
 type RootStackParamList = {

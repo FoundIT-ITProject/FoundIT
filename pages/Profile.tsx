@@ -198,6 +198,7 @@ const Profile = () => {
 
   const handleCloseMyItemsModal = () => {
     setShowMyItemsModal(false);
+
   };
 
   return (
@@ -406,6 +407,7 @@ const Profile = () => {
           <ItemPage onClose={handleCloseMyItemsModal} />
         </View>
       )}
+
     </SafeAreaView>
   );
 };

@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { usePushNotifications } from "./components/Notifications"
 import {
+  InsideNavigation,
   OutsideNavigation,
   AdminNavigation,
   OwnerNavigation,
@@ -12,9 +16,12 @@ import { FIREBASE_AUTH, FIREBASE_DB } from "./lib/firebaseConfig";
 import React from "react";
 import { doc, getDoc } from "firebase/firestore";
 
+
 export default function App() {
   const Stack = createNativeStackNavigator();
-
+  const {expoPushToken} = usePushNotifications();
+  console.log(expoPushToken);
+  
   const [user, setUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
 
