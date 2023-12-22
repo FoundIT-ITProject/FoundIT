@@ -40,7 +40,6 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
-  
   const navigation = useNavigation();
 
   const auth = getAuth(FIREBASE_APP);
@@ -87,50 +86,49 @@ const Profile = () => {
     fetchUserData();
   }, [currentUser]);
 
-  
   const handleFirstNameIconClick = async () => {
     setShowFirstNameInput((prev) => !prev);
     if (showFirstNameInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { Voornaam: firstName }, { merge: true });
           console.log("First Name Updated!");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error updating first name:", error.message);
       }
     }
   };
-  
+
   const handleLastNameIconClick = async () => {
     setShowLastNameInput((prev) => !prev);
     if (showLastNameInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { Achternaam: lastName }, { merge: true });
           console.log("Last Name Updated!");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error updating last name:", error.message);
       }
     }
   };
-  
+
   const handleEmailIconClick = async () => {
     setShowEmailInput((prev) => !prev);
     if (showEmailInput) {
       try {
         if (currentUser) {
           const userDocRef = doc(FIREBASE_DB, "Users", currentUser.uid);
-  
+
           await setDoc(userDocRef, { email: email }, { merge: true });
           console.log("Email Updated!");
         }
-      } catch (error:any) {
+      } catch (error: any) {
         console.error("Error updating email:", error.message);
       }
     }
@@ -219,7 +217,7 @@ const Profile = () => {
   };
 
   const handleMyItems = () => {
-    navigation.navigate("MyItems");
+    navigation.navigate("MyItems" as never);
   };
 
   return (
@@ -421,13 +419,15 @@ const Profile = () => {
       </Modal>
 
       <TouchableOpacity
-      //style={styles.myItemsButton}
-      onPress={handleMyItems}
-    >
-      <Text 
-     // style={styles.myItemsButtonText}
-      >My Items</Text>
-    </TouchableOpacity>
+        //style={styles.myItemsButton}
+        onPress={handleMyItems}
+      >
+        <Text
+        // style={styles.myItemsButtonText}
+        >
+          My Items
+        </Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
