@@ -4,10 +4,14 @@ import { ItemData } from "../lib/types";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
+import { usePushNotifications } from "./Notifications";
+import { scheduleNotificationAsync } from "expo-notifications";
 
 const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
   const navigation = useNavigation();
+  const {expoPushToken} = usePushNotifications();
+  console.log(expoPushToken);
 
   const [itemCreator, setItemCreator] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true); // State for general loading
@@ -56,12 +60,18 @@ const ItemDetail = ({ route }: { route: any }) => {
       await updateDoc(itemRef, {
         status: "pending",
       });
+
+
     } catch (error) {
       console.error("Error updating item:", error);
     } finally {
       setRedeemLoading(false); // Set redeem button loading state to false
     }
+
+    
   };
+
+  
 
   return (
     <View style={styles.container}>
@@ -100,6 +110,8 @@ const ItemDetail = ({ route }: { route: any }) => {
               setRedeemLoading(true); // Set redeem button loading state to true before redeemItem call
               await redeemItem(item);
               navigation.goBack();
+              await schedulePushNotification();
+
             }}
             disabled={redeemLoading} // Disable button when it's in loading state
           >
@@ -112,10 +124,22 @@ const ItemDetail = ({ route }: { route: any }) => {
             </Text>
           </TouchableOpacity>
         </View>
+
       )}
     </View>
   );
 };
+
+async function schedulePushNotification() {
+  await scheduleNotificationAsync({
+    content: {
+      title: "Proficiat !",
+      body: 'De product is verplaatst ',
+      data: { data: 'goes here' },
+    },
+    trigger: { seconds: 1 },
+  });
+}
 
 const styles = StyleSheet.create({
   container: {
