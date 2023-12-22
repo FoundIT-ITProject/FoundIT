@@ -1,43 +1,17 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import {
-  getFirestore,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import {
-  KeyboardAvoidingView,
-  Alert,
-  TextInput,
-  Button,
-  StyleSheet,
-  TouchableOpacity,
-  GestureResponderEvent,
-  Modal,
-} from "react-native";
-import { AuthCredential, User } from "firebase/auth";
-import {
-  FIREBASE_APP,
-  FIREBASE_AUTH,
-  FIREBASE_DB,
-} from "../lib/firebaseConfig";
-import { Image } from "react-native";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { KeyboardAvoidingView, TextInput, TouchableOpacity, Modal } from "react-native";
+import { User } from "firebase/auth";
+import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB } from "../lib/firebaseConfig";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { Feather } from "@expo/vector-icons";
-import {
-  EmailAuthProvider,
-  getAuth,
-  updateProfile,
-  reauthenticateWithCredential,
-  updatePassword,
-  updateEmail,
-} from "firebase/auth";
+import { EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword, updateEmail } from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import ItemPage from "../components/ItemPage";
+import { styles } from "../components/ui/Profile_Styles";
+
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -63,6 +37,8 @@ const Profile = () => {
   const [showFirstNameInput, setShowFirstNameInput] = useState(false);
   const [showLastNameInput, setShowLastNameInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
+
+  const [showMyItemsModal, setShowMyItemsModal] = useState(false);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -216,14 +192,19 @@ const Profile = () => {
     }
   };
 
-  const handleMyItems = () => {
-    navigation.navigate("MyItems" as never);
+  const handleMyItemsClick = () => {
+    setShowMyItemsModal(true);
+  };
+
+  const handleCloseMyItemsModal = () => {
+    setShowMyItemsModal(false);
+
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <View>
+        <View style={{ marginBottom: 13 }}>
           <ProfileAvatar firstName={firstName} lastName={lastName} />
         </View>
         <View style={styles.form}>
@@ -293,24 +274,17 @@ const Profile = () => {
               )}
             </TouchableOpacity>
           </View>
+
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
-
-            <View style={styles.inputWrapper}>
-              <Text>{email}</Text>
-            </View>
-          </View>
-
-          <View style={styles.inputContainer}>
             <TouchableOpacity
-              style={{ ...styles.changePasswordButton, marginBottom: -15 }}
               onPress={handleOpenEmailModal}
+              style={styles.inputWrapper}
             >
-              <Text style={styles.changePasswordText}>Change Email</Text>
+              <Text style={styles.input}>{email}</Text>
+              <Icon name="pencil" size={20} color="#000" style={styles.icon} />
             </TouchableOpacity>
           </View>
-
-          {/* Email Change Modal */}
           <Modal
             visible={showEmailModal}
             animationType="slide"
@@ -419,161 +393,23 @@ const Profile = () => {
       </Modal>
 
       <TouchableOpacity
-        //style={styles.myItemsButton}
-        onPress={handleMyItems}
+        style={styles.myItemsButton}
+        onPress={handleMyItemsClick}
       >
-        <Text
-        // style={styles.myItemsButtonText}
-        >
-          My Items
-        </Text>
+        <View style={styles.lostAndFoundBox}>
+          <View style={styles.boxTop}></View>
+          <Text style={styles.myItemsText}>My Items </Text>
+        </View>
       </TouchableOpacity>
+
+      {showMyItemsModal && (
+        <View style={styles.modalContainer}>
+          <ItemPage onClose={handleCloseMyItemsModal} />
+        </View>
+      )}
+
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f0f0f0",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  form: {
-    flex: 1,
-    width: "100%",
-  },
-
-  label: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-    textAlign: "center",
-  },
-
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-    textAlign: "center",
-  },
-  logoutContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
-  logoutButton: {
-    display: "flex",
-    width: 269,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 100,
-    backgroundColor: "#000",
-  },
-  logoutText: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-
-  buttonGroup: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-
-  confirmButton: {
-    backgroundColor: "#888",
-    borderRadius: 100,
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
-    padding: 10,
-    alignSelf: "center",
-    width: 110,
-    height: 50,
-  },
-  cancelButton: {
-    backgroundColor: "#000",
-    borderRadius: 100,
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 20,
-    padding: 10,
-    alignSelf: "center",
-    width: 110,
-    height: 50,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    position: "relative",
-    marginBottom: 20,
-  },
-  input: {
-    fontSize: 16,
-    color: "#555",
-    padding: 8,
-    textAlign: "center",
-  },
-
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-
-    borderRadius: 5,
-    padding: 5,
-    borderColor: "transparent",
-  },
-  icon: {
-    marginLeft: 10,
-    position: "absolute",
-    right: 10,
-  },
-
-  changePasswordButton: {
-    marginTop: 20,
-    marginBottom: 20,
-    backgroundColor: "#888",
-    padding: 10,
-    borderRadius: 100,
-    alignSelf: "center",
-    alignItems: "center",
-    width: 210,
-    height: 50,
-  },
-
-  changePasswordText: {
-    color: "#fff",
-    fontSize: 18,
-    textAlign: "center",
-  },
-});
 
 export default Profile;
