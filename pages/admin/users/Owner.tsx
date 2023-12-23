@@ -11,6 +11,13 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../../../lib/firebaseConfig";
 import RegularDetailsPage from "./detail/RegularDetailsPage";
 
+interface User {
+  email: string;
+  voornaam: string;
+  achternaam: string;
+  uid: string;
+}
+
 const OwnerPage = ({ navigation }: { route: any; navigation: any }) => {
   const [userDetails, setUserDetails] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -28,8 +35,8 @@ const OwnerPage = ({ navigation }: { route: any; navigation: any }) => {
         uid: doc.data().UID,
       }));
 
-      setUserDetails(users);
-    } catch (error) {
+      setUserDetails(users as any);
+    } catch (error:any) {
       console.error("Error fetching user details:", error.message);
     }
   }, []);
@@ -38,7 +45,7 @@ const OwnerPage = ({ navigation }: { route: any; navigation: any }) => {
     fetchUserDetails();
   }, [fetchUserDetails]);
 
-  const handleEmailPress = (user) => {
+  const handleEmailPress = (user:any) => {
     navigation.navigate("RegularDetailsPage", {
       email: user.email,
       voornaam: user.voornaam,
@@ -56,7 +63,7 @@ const OwnerPage = ({ navigation }: { route: any; navigation: any }) => {
 
   return (
     <View style={styles.cardContainer}>
-      <FlatList
+      <FlatList<User>
         data={userDetails}
         keyExtractor={(user) => user.email}
         renderItem={({ item }) => (

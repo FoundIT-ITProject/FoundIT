@@ -4,6 +4,13 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../../../lib/firebaseConfig";
 import RegularDetailsPage from './detail/RegularDetailsPage';
 
+interface User {
+  email: string;
+  voornaam: string;
+  achternaam: string;
+  uid: string;
+}
+
 const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
   const [userDetails, setUserDetails] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -14,7 +21,7 @@ const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
       const usersQuery = query(usersCollection, where("role", "==", "Admin"));
       const querySnapshot = await getDocs(usersQuery);
 
-      const users = querySnapshot.docs.map((doc) => ({
+      const users:any = querySnapshot.docs.map((doc:any) => ({
         email: doc.data().email,
         voornaam: doc.data().Voornaam,
         achternaam: doc.data().Achternaam,
@@ -22,7 +29,7 @@ const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
       }));
 
       setUserDetails(users);
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error fetching user details:", error.message);
     }
   }, []);
@@ -31,9 +38,9 @@ const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
     fetchUserDetails();
   }, [fetchUserDetails]);
 
-  const handleEmailPress = (user) => {
+  const handleEmailPress = (user:any) => {
     navigation.navigate("AdminDetailsPage", {
-      email: user.email,
+      email: user.email as any,
       voornaam: user.voornaam,
       achternaam: user.achternaam,
       uid: user.uid,
@@ -49,7 +56,7 @@ const AdminPage = ({ navigation }:{route:any, navigation:any}) => {
 
   return (
     <View style={styles.cardContainer}>
-      <FlatList
+      <FlatList<User>
         data={userDetails}
         keyExtractor={(user) => user.email}
         renderItem={({ item }) => (
