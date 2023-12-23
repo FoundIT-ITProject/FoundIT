@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { ItemData } from "../lib/types";
 import { useNavigation } from "@react-navigation/native";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, DocumentReference } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 import { usePushNotifications } from "./Notifications";
 import { scheduleNotificationAsync } from "expo-notifications";
@@ -15,99 +22,120 @@ const ItemDetail = ({ route }: { route: any }) => {
 
   const [itemCreator, setItemCreator] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true); // State for general loading
-  const [redeemLoading, setRedeemLoading] = useState<boolean>(false); // State for redeem button loading
+  const [loading, setLoading] = useState<boolean>(true);
+  const [redeemLoading, setRedeemLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const getItemCreator = async (uid: string) => {
-      const currentUser = await getAuth();
-      const userRef = doc(FIREBASE_DB, "Users", uid);
-      const currentU = currentUser.currentUser?.uid as string;
-      const userRef2 = doc(FIREBASE_DB, "Users", currentU);
+    const fetchItemCreator = async (uid: string) => {
       try {
-        const docSnap = await getDoc(userRef);
-        const docSnap2 = await getDoc(userRef2);
-        if (docSnap2.exists()) {
-          const userData = docSnap2.data();
-          const role = userData?.role;
-          setUserRole(role || "No role found");
-        } else {
-          console.log("CurrentUser not found");
-        }
-        if (docSnap.exists()) {
-          const userData = docSnap.data();
+        const currentUser = getAuth();
+        const userRef = doc(FIREBASE_DB, "Users", uid);
+        const currentUserId = currentUser.currentUser?.uid as string;
+        const currentUserRef = doc(FIREBASE_DB, "Users", currentUserId);
+
+        const [userSnapshot, currentUserSnapshot] = await Promise.all([
+          getDoc(userRef),
+          getDoc(currentUserRef),
+        ]);
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
           const creator = userData?.Voornaam + " " + userData?.Achternaam;
           setItemCreator(creator || "No creator found");
         } else {
           console.log("User not found");
         }
-      } catch (e) {
-        console.error("Error fetching user data:", e);
+
+        if (currentUserSnapshot.exists()) {
+          const userData = currentUserSnapshot.data();
+          const role = userData?.role;
+          setUserRole(role || "No role found");
+        } else {
+          console.log("Current user not found");
+        }
+      } catch (error) {
+        handleFetchError(error);
       } finally {
-        setLoading(false); // Set general loading to false once data is fetched
+        setLoading(false);
       }
     };
 
-    getItemCreator(item.user_id);
+    fetchItemCreator(item.user_id);
   }, [item.user_id]);
 
   const redeemItem = async (item: ItemData) => {
-    setRedeemLoading(true); // Set redeem button loading state to true
+    setRedeemLoading(true);
 
-    const itemRef = doc(FIREBASE_DB, "Items", item.item_id);
+    const itemRef: DocumentReference = doc(FIREBASE_DB, "Items", item.item_id);
+    const newStatus =
+      userRole === "User"
+        ? item.status === "pending"
+          ? "lost"
+          : "pending"
+        : item.status === "pending"
+        ? "found"
+        : "pending";
+
+    try {
+      await updateItemStatus(itemRef, newStatus);
+    } catch (error) {
+      handleItemUpdateError(error);
+    }
+  };
+
+  const updateItemStatus = async (
+    itemRef: DocumentReference,
+    newStatus: string
+  ) => {
+    try {
+      await updateDoc(itemRef, { status: newStatus });
+      await schedulePushNotification();
+    } catch (error) {
+      handleItemUpdateError(error);
+    } finally {
+      setRedeemLoading(false);
+      navigation.goBack();
+    }
+  };
+
+  const schedulePushNotification = async () => {
+    await scheduleNotificationAsync({
+      content: {
+        title: "Congratulations!",
+        body: "The product has been moved.",
+        data: { data: "goes here" },
+      },
+      trigger: { seconds: 1 },
+    });
+  };
+
+  const handleFetchError = (error: any) => {
+    console.error("Error fetching data:", error);
+    Alert.alert("Error", "Something went wrong, please try again.");
+  };
+
+  const handleItemUpdateError = (error: any) => {
+    console.error("Error updating item:", error);
+    Alert.alert("Error", "Something went wrong, please try again.");
+  };
+
+  const renderButtonText = () => {
+    if (redeemLoading) {
+      return "Loading...";
+    }
+
     if (userRole === "User") {
-      if (item.status === "pending") {
-        try {
-          await updateDoc(itemRef, {
-            status: "lost",
-          });
-          await schedulePushNotification();
-        } catch (error) {
-          console.error("Error updating item:", error);
-        } finally {
-          setRedeemLoading(false); // Set redeem button loading state to false
-          return;
-        }
+      return item.status === "pending" ? "Mark Item as Lost" : "Claim Item";
+    } else if (userRole === "Owner") {
+      if (item.status === "lost") {
+        return "You can't claim a lost item";
       }
-
-      try {
-        await updateDoc(itemRef, {
-          status: "pending",
-        });
-        await schedulePushNotification();
-      } catch (error) {
-        console.error("Error updating item:", error);
-      } finally {
-        setRedeemLoading(false); // Set redeem button loading state to false
-      }
+      return item.status === "pending"
+        ? "Confirm Item as Found"
+        : "Mark Item as Pending";
     }
 
-    if (userRole === "Owner") {
-      if (item.status === "pending") {
-        try {
-          await updateDoc(itemRef, {
-            status: "found",
-          });
-          await schedulePushNotification();
-        } catch (error) {
-          console.error("Error updating item:", error);
-        } finally {
-          setRedeemLoading(false); // Set redeem button loading state to false
-          return;
-        }
-      }
-
-      try {
-        await updateDoc(itemRef, {
-          status: "pending",
-        });
-        await schedulePushNotification();
-      } catch (error) {
-        console.error("Error updating item:", error);
-      } finally {
-        setRedeemLoading(false); // Set redeem button loading state to false
-      }
-    }
+    return "";
   };
 
   return (
@@ -144,42 +172,18 @@ const ItemDetail = ({ route }: { route: any }) => {
           <TouchableOpacity
             style={styles.button}
             onPress={async () => {
-              setRedeemLoading(true); // Set redeem button loading state to true before redeemItem call
+              setRedeemLoading(true);
               await redeemItem(item);
-              navigation.goBack();
             }}
-            disabled={redeemLoading} // Disable button when it's in loading state
+            disabled={redeemLoading}
           >
-            <Text style={{ color: "#fff" }}>
-              {redeemLoading
-                ? "Loading..."
-                : userRole === "User"
-                ? item.status === "pending"
-                  ? "Mark Item as Lost"
-                  : "Claim Item"
-                : item.status === "pending"
-                ? "Confirm Item as Found"
-                : item.status === "lost"
-                ? "You can't claim a lost item"
-                : "Mark Item as Pending"}
-            </Text>
+            <Text style={{ color: "#fff" }}>{renderButtonText()}</Text>
           </TouchableOpacity>
         </View>
       )}
     </View>
   );
 };
-
-async function schedulePushNotification() {
-  await scheduleNotificationAsync({
-    content: {
-      title: "Proficiat !",
-      body: "De product is verplaatst ",
-      data: { data: "goes here" },
-    },
-    trigger: { seconds: 1 },
-  });
-}
 
 const styles = StyleSheet.create({
   container: {
