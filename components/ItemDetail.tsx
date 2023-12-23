@@ -61,6 +61,7 @@ const ItemDetail = ({ route }: { route: any }) => {
           await updateDoc(itemRef, {
             status: "lost",
           });
+          await schedulePushNotification();
         } catch (error) {
           console.error("Error updating item:", error);
         } finally {
@@ -73,6 +74,7 @@ const ItemDetail = ({ route }: { route: any }) => {
         await updateDoc(itemRef, {
           status: "pending",
         });
+        await schedulePushNotification();
       } catch (error) {
         console.error("Error updating item:", error);
       } finally {
@@ -86,6 +88,7 @@ const ItemDetail = ({ route }: { route: any }) => {
           await updateDoc(itemRef, {
             status: "found",
           });
+          await schedulePushNotification();
         } catch (error) {
           console.error("Error updating item:", error);
         } finally {
@@ -98,6 +101,7 @@ const ItemDetail = ({ route }: { route: any }) => {
         await updateDoc(itemRef, {
           status: "pending",
         });
+        await schedulePushNotification();
       } catch (error) {
         console.error("Error updating item:", error);
       } finally {
@@ -143,7 +147,6 @@ const ItemDetail = ({ route }: { route: any }) => {
               setRedeemLoading(true); // Set redeem button loading state to true before redeemItem call
               await redeemItem(item);
               navigation.goBack();
-              await schedulePushNotification();
             }}
             disabled={redeemLoading} // Disable button when it's in loading state
           >
