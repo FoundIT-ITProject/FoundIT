@@ -30,7 +30,6 @@ function HomeStack() {
   );
 }
 
-
 // Inside The Admin role Page
 import Users from "../pages/admin/Users";
 import Regular from "../pages/admin/users/Regular";
@@ -39,21 +38,11 @@ import Admin from "../pages/admin/users/Admin";
 import RegularDetailsPage from "../pages/admin/users/detail/RegularDetailsPage";
 import AdminDetailsPage from "../pages/admin/users/detail/AdminDetailsPage";
 
-
 // Admin menu role
 import HomeAdmin from "../pages/admin/HomeAdmin";
 import ItemDetailAdmin from "../pages/admin/ItemdetailAdmin";
 
-
-
-
-
-
-
-
-
 // Role Pages
-import OwnerPage from "../pages/OwnerPage";
 
 export const UserNavigation = () => {
   const UserStack = createBottomTabNavigator();
@@ -67,7 +56,7 @@ export const UserNavigation = () => {
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "calendar" : "calendar-outline";
+            iconName = focused ? "person-circle" : "person-circle-outline";
           }
 
           // You can return any component that you like here!
@@ -137,7 +126,9 @@ export const AdminNavigation = () => {
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "calendar" : "calendar-outline";
+            iconName = focused ? "person-circle" : "person-circle-outline";
+          } else if (route.name === "Managment") {
+            iconName = focused ? "people" : "people-outline";
           }
 
           // You can return any component that you like here!
@@ -158,14 +149,16 @@ export const AdminNavigation = () => {
   );
 };
 
-
 const AdminHomeStack = () => {
   const AdminHomeStack = createNativeStackNavigator();
 
   return (
     <AdminHomeStack.Navigator>
       <AdminHomeStack.Screen name="Home" component={HomeAdmin} />
-      <AdminHomeStack.Screen name="ItemDetailAdmin" component={ItemDetailAdmin} />
+      <AdminHomeStack.Screen
+        name="ItemDetailAdmin"
+        component={ItemDetailAdmin}
+      />
       <AdminHomeStack.Group screenOptions={{ presentation: "modal" }}>
         <AdminHomeStack.Screen
           name="UploadItem"
@@ -176,7 +169,6 @@ const AdminHomeStack = () => {
     </AdminHomeStack.Navigator>
   );
 };
-
 
 export const OwnerNavigation = () => {
   const OwnerStack = createBottomTabNavigator();
@@ -190,7 +182,7 @@ export const OwnerNavigation = () => {
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Profile") {
-            iconName = focused ? "calendar" : "calendar-outline";
+            iconName = focused ? "person-circle" : "person-circle-outline";
           }
 
           // You can return any component that you like here!
@@ -202,12 +194,6 @@ export const OwnerNavigation = () => {
     >
       <OwnerStack.Screen name="Home Page" component={HomeStack} />
       <OwnerStack.Screen name="Profile" component={Profile} />
-      <OwnerStack.Screen
-        name="UsersStack"
-        component={UsersStack}
-        options={{ headerShown: false }}
-      />
-      <OwnerStack.Screen name="Owner Page" component={OwnerPage} />
     </OwnerStack.Navigator>
   );
 };

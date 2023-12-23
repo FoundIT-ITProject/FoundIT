@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Text, FlatList, View, StyleSheet, TouchableOpacity, RefreshControl } from "react-native";
+import {
+  Text,
+  FlatList,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIREBASE_DB } from "../../../lib/firebaseConfig";
-import RegularDetailsPage from './detail/RegularDetailsPage';
+import RegularDetailsPage from "./detail/RegularDetailsPage";
 
-const OwnerPage = ({ navigation }:{route:any, navigation:any}) => {
+const OwnerPage = ({ navigation }: { route: any; navigation: any }) => {
   const [userDetails, setUserDetails] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -60,10 +67,7 @@ const OwnerPage = ({ navigation }:{route:any, navigation:any}) => {
           </TouchableOpacity>
         )}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       />
     </View>
@@ -73,15 +77,15 @@ const OwnerPage = ({ navigation }:{route:any, navigation:any}) => {
 const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
     padding: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
   },
 });
 
