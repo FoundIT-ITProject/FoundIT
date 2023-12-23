@@ -6,22 +6,34 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../lib/firebaseConfig";
 import { usePushNotifications } from "./Notifications";
 import { scheduleNotificationAsync } from "expo-notifications";
+import { getAuth } from "firebase/auth";
 
 const ItemDetail = ({ route }: { route: any }) => {
   const { item, imageUrl }: { item: ItemData; imageUrl: string } = route.params;
   const navigation = useNavigation();
-  const {expoPushToken} = usePushNotifications();
-  console.log(expoPushToken);
+  const { expoPushToken } = usePushNotifications();
 
   const [itemCreator, setItemCreator] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true); // State for general loading
   const [redeemLoading, setRedeemLoading] = useState<boolean>(false); // State for redeem button loading
 
   useEffect(() => {
     const getItemCreator = async (uid: string) => {
+      const currentUser = await getAuth();
       const userRef = doc(FIREBASE_DB, "Users", uid);
+      const currentU = currentUser.currentUser?.uid as string;
+      const userRef2 = doc(FIREBASE_DB, "Users", currentU);
       try {
         const docSnap = await getDoc(userRef);
+        const docSnap2 = await getDoc(userRef2);
+        if (docSnap2.exists()) {
+          const userData = docSnap2.data();
+          const role = userData?.role;
+          setUserRole(role || "No role found");
+        } else {
+          console.log("CurrentUser not found");
+        }
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const creator = userData?.Voornaam + " " + userData?.Achternaam;
@@ -43,35 +55,56 @@ const ItemDetail = ({ route }: { route: any }) => {
     setRedeemLoading(true); // Set redeem button loading state to true
 
     const itemRef = doc(FIREBASE_DB, "Items", item.item_id);
-    if (item.status === "pending") {
+    if (userRole === "User") {
+      if (item.status === "pending") {
+        try {
+          await updateDoc(itemRef, {
+            status: "lost",
+          });
+        } catch (error) {
+          console.error("Error updating item:", error);
+        } finally {
+          setRedeemLoading(false); // Set redeem button loading state to false
+          return;
+        }
+      }
+
       try {
         await updateDoc(itemRef, {
-          status: "lost",
+          status: "pending",
         });
       } catch (error) {
         console.error("Error updating item:", error);
       } finally {
         setRedeemLoading(false); // Set redeem button loading state to false
-        return;
       }
     }
 
-    try {
-      await updateDoc(itemRef, {
-        status: "pending",
-      });
+    if (userRole === "Owner") {
+      if (item.status === "pending") {
+        try {
+          await updateDoc(itemRef, {
+            status: "found",
+          });
+        } catch (error) {
+          console.error("Error updating item:", error);
+        } finally {
+          setRedeemLoading(false); // Set redeem button loading state to false
+          return;
+        }
+      }
 
-
-    } catch (error) {
-      console.error("Error updating item:", error);
-    } finally {
-      setRedeemLoading(false); // Set redeem button loading state to false
+      try {
+        await updateDoc(itemRef, {
+          status: "pending",
+        });
+      } catch (error) {
+        console.error("Error updating item:", error);
+      } finally {
+        setRedeemLoading(false); // Set redeem button loading state to false
+      }
     }
-
-    
   };
-
-  
 
   return (
     <View style={styles.container}>
@@ -111,20 +144,24 @@ const ItemDetail = ({ route }: { route: any }) => {
               await redeemItem(item);
               navigation.goBack();
               await schedulePushNotification();
-
             }}
             disabled={redeemLoading} // Disable button when it's in loading state
           >
             <Text style={{ color: "#fff" }}>
               {redeemLoading
                 ? "Loading..."
+                : userRole === "User"
+                ? item.status === "pending"
+                  ? "Mark Item as Lost"
+                  : "Claim Item"
                 : item.status === "pending"
-                ? "Mark as lost"
-                : "Redeem Item"}
+                ? "Confirm Item as Found"
+                : item.status === "lost"
+                ? "You can't claim a lost item"
+                : "Mark Item as Pending"}
             </Text>
           </TouchableOpacity>
         </View>
-
       )}
     </View>
   );
@@ -134,8 +171,8 @@ async function schedulePushNotification() {
   await scheduleNotificationAsync({
     content: {
       title: "Proficiat !",
-      body: 'De product is verplaatst ',
-      data: { data: 'goes here' },
+      body: "De product is verplaatst ",
+      data: { data: "goes here" },
     },
     trigger: { seconds: 1 },
   });
