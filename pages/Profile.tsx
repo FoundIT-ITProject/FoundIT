@@ -54,8 +54,6 @@ const Profile = () => {
 
   const [showMyItemsModal, setShowMyItemsModal] = useState(false);
 
-
-const [userRole, setUserRole] = useState<string | null>(null);
   useEffect(() => {
     async function fetchUserData() {
       try {
@@ -68,9 +66,6 @@ const [userRole, setUserRole] = useState<string | null>(null);
             setFirstName(userData.Voornaam || "");
             setLastName(userData.Achternaam || "");
             setEmail(userData.email || "");
-            const role = userData?.role || null; 
-
-          setUserRole(role);
           }
         }
       } catch (error: any) {
@@ -218,7 +213,7 @@ const [userRole, setUserRole] = useState<string | null>(null);
   const handleCloseMyItemsModal = () => {
     setShowMyItemsModal(false);
   };
-  console.log("User Role:", userRole);
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -410,23 +405,21 @@ const [userRole, setUserRole] = useState<string | null>(null);
         </View>
       </Modal>
 
-      {userRole === "User" && (
-          <TouchableOpacity
-            style={styles.myItemsButton}
-            onPress={handleMyItemsClick}
-          >
-      <View style={styles.lostAndFoundBox}>
-              <View style={styles.boxTop}></View>
-              <Text style={styles.myItemsText}>My Items</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+      <TouchableOpacity
+        style={styles.myItemsButton}
+        onPress={handleMyItemsClick}
+      >
+        <View style={styles.lostAndFoundBox}>
+          <View style={styles.boxTop}></View>
+          <Text style={styles.myItemsText}>My Items </Text>
+        </View>
+      </TouchableOpacity>
 
-        {showMyItemsModal && (
-          <View style={styles.modalContainer}>
-            <ItemPage onClose={handleCloseMyItemsModal} />
-          </View>
-        )}
+      {showMyItemsModal && (
+        <View style={styles.modalContainer}>
+          <ItemPage onClose={handleCloseMyItemsModal} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
