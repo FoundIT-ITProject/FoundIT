@@ -1,17 +1,31 @@
 import { View, Text } from "react-native";
 import React, { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { KeyboardAvoidingView, TextInput, TouchableOpacity, Modal } from "react-native";
+import {
+  KeyboardAvoidingView,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import { User } from "firebase/auth";
-import { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB } from "../lib/firebaseConfig";
+import {
+  FIREBASE_APP,
+  FIREBASE_AUTH,
+  FIREBASE_DB,
+} from "../lib/firebaseConfig";
 import ProfileAvatar from "../components/ProfileAvatar";
-import { EmailAuthProvider, getAuth, reauthenticateWithCredential, updatePassword, updateEmail } from "firebase/auth";
+import {
+  EmailAuthProvider,
+  getAuth,
+  reauthenticateWithCredential,
+  updatePassword,
+  updateEmail,
+} from "firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import ItemPage from "../components/ItemPage";
 import { styles } from "../components/ui/Profile_Styles";
-
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -198,7 +212,6 @@ const Profile = () => {
 
   const handleCloseMyItemsModal = () => {
     setShowMyItemsModal(false);
-
   };
 
   return (
@@ -407,7 +420,6 @@ const Profile = () => {
           <ItemPage onClose={handleCloseMyItemsModal} />
         </View>
       )}
-
     </SafeAreaView>
   );
 };
