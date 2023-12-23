@@ -173,8 +173,8 @@ const ItemDetail = ({ route }: { route: any }) => {
 async function schedulePushNotification() {
   await scheduleNotificationAsync({
     content: {
-      title: "Proficiat !",
-      body: "De product is verplaatst ",
+      title: "Congratulations!",
+      body: "The item has been successfully relocated.",
       data: { data: "goes here" },
     },
     trigger: { seconds: 1 },
