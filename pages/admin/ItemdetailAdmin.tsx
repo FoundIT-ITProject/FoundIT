@@ -22,7 +22,7 @@ console.log(item.item_id);
 
       // Navigate back to the previous screen
       navigation.goBack();
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error deleting item:", error.message);
       Alert.alert("Error", "Failed to delete item. Please try again.");
     }
