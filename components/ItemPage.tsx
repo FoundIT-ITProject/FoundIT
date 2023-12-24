@@ -7,7 +7,6 @@ import {
   ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
-  Platform,
   TextInput,
 } from "react-native";
 import {
@@ -23,7 +22,6 @@ import {
 import { getAuth } from "firebase/auth";
 import { ItemData } from "../lib/types";
 import ItemCard from "../components/ui/ItemCard";
-import { Image } from "react-native";
 
 const ItemPage = ({ onClose }: { onClose: () => void }) => {
   const [userItems, setUserItems] = useState<ItemData[]>([]);
