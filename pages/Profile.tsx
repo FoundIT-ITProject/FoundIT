@@ -33,6 +33,8 @@ const Profile = () => {
   const auth = getAuth(FIREBASE_APP);
   const currentUser: User | null = auth.currentUser;
 
+  const [userRole, setUserRole] = useState<string | null>(null);
+
   const userUid = currentUser?.uid || "";
 
   const [email, setEmail] = useState(currentUser?.email || "");
@@ -66,6 +68,9 @@ const Profile = () => {
             setFirstName(userData.Voornaam || "");
             setLastName(userData.Achternaam || "");
             setEmail(userData.email || "");
+            const role = userData?.role || null;
+
+            setUserRole(role);
           }
         }
       } catch (error: any) {
@@ -405,16 +410,17 @@ const Profile = () => {
         </View>
       </Modal>
 
-      <TouchableOpacity
-        style={styles.myItemsButton}
-        onPress={handleMyItemsClick}
-      >
-        <View style={styles.lostAndFoundBox}>
-          <View style={styles.boxTop}></View>
-          <Text style={styles.myItemsText}>My Items </Text>
-        </View>
-      </TouchableOpacity>
-
+      {userRole === "User" && (
+        <TouchableOpacity
+          style={styles.myItemsButton}
+          onPress={handleMyItemsClick}
+        >
+          <View style={styles.lostAndFoundBox}>
+            <View style={styles.boxTop}></View>
+            <Text style={styles.myItemsText}>My Items</Text>
+          </View>
+        </TouchableOpacity>
+      )}
       {showMyItemsModal && (
         <View style={styles.modalContainer}>
           <ItemPage onClose={handleCloseMyItemsModal} />
